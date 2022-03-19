@@ -4,15 +4,15 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+// Angular CDK
+import { LayoutModule } from '@angular/cdk/layout';
 // Angular Material Modules
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatCardModule } from '@angular/material/card';
-import {MatProgressBarModule} from '@angular/material/progress-bar';
-import { LayoutModule } from '@angular/cdk/layout';
+import { MatMenuModule } from '@angular/material/menu';
 
 @NgModule({
    declarations: [AppComponent],
@@ -26,8 +26,7 @@ import { LayoutModule } from '@angular/cdk/layout';
       MatIconModule,
       MatDividerModule,
       LayoutModule,
-      MatCardModule,
-      MatProgressBarModule
+      MatMenuModule,
    ],
    providers: [],
    bootstrap: [AppComponent],
