@@ -13,9 +13,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
+import { LayoutComponent } from './components/layout/layout.component';
 
 @NgModule({
-   declarations: [AppComponent],
+   declarations: [AppComponent, LayoutComponent],
    imports: [
       BrowserModule,
       AppRoutingModule,
