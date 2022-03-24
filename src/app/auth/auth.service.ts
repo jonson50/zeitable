@@ -74,7 +74,7 @@ export abstract class AuthService extends CacheService implements IAuthService {
    // Class methods
    login(email: string, password: string): Observable<void> {
       this.clearToken();
-
+      
       const loginResponse$ = this.authProvider(email, password).pipe(
          map((value) => {
             this.setToken(value.accessToken);
@@ -87,8 +87,9 @@ export abstract class AuthService extends CacheService implements IAuthService {
 
       loginResponse$.subscribe({
          error: (err) => {
+            console.error(err)
             this.logout();
-            return throwError(err);
+            return throwError(() => new Error(err));
          },
       });
 

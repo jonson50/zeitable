@@ -26,7 +26,7 @@ export interface IUser {
    picture: string
    role: Role | string
    userStatus: boolean
-   deteOfBirth: Date | null | string
+   dateOfBirth: Date | null | string
    level: number
    address: {
       line1: string
@@ -48,7 +48,7 @@ export class User implements IUser {
       public picture = '',
       public role = Role.None,
       public userStatus = false,
-      public deteOfBirth: Date | null = null,
+      public dateOfBirth: Date | null = null,
       public level = 0,
       public address = {
          line1: '',
@@ -64,8 +64,8 @@ export class User implements IUser {
             return new User()
          }
 
-         if(typeof user.deteOfBirth === 'string') {
-            user.deteOfBirth = new Date(user.deteOfBirth)
+         if(typeof user.dateOfBirth === 'string') {
+            user.dateOfBirth = new Date(user.dateOfBirth)
          }
 
          return new User(
@@ -75,7 +75,7 @@ export class User implements IUser {
             user.picture,
             user.role as Role,
             user.userStatus,
-            user.deteOfBirth,
+            user.dateOfBirth,
             user.level,
             user.address,
             user.phones

@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { BreakpointObserver } from '@angular/cdk/layout';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
    selector: 'app-layout',
@@ -11,7 +12,10 @@ export class LayoutComponent implements OnInit, AfterViewInit {
    @ViewChild(MatSidenav)
    sidenav!: MatSidenav;
 
-   constructor(private observer: BreakpointObserver) {}
+   constructor(
+      private observer: BreakpointObserver,
+      private authService: AuthService
+      ) {}
 
    ngOnInit(): void {}
 
@@ -28,5 +32,9 @@ export class LayoutComponent implements OnInit, AfterViewInit {
             }
          });
       });
+   }
+
+   login(){
+      this.authService.login('manager@test.com', '123456');
    }
 }

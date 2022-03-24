@@ -4,6 +4,3 @@ export enum Role {
    Clerk = 'clerk',
    Manager = 'manager',
 }
-
-export enum Auth {
-}
