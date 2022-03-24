@@ -17,9 +17,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
 import { LayoutComponent } from './components/layout/layout.component';
+import { LoginComponent } from './components/login/login.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
-   declarations: [AppComponent, LayoutComponent],
+   declarations: [AppComponent, LayoutComponent, LoginComponent],
    imports: [
       BrowserModule,
       AppRoutingModule,
@@ -31,6 +34,8 @@ import { LayoutComponent } from './components/layout/layout.component';
       MatDividerModule,
       LayoutModule,
       MatMenuModule,
+      MatInputModule,
+      MatCheckboxModule,
    ],
    providers: [
       {

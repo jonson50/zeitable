@@ -1,0 +1,12 @@
+.login-container {
+   height: 100vh;
+   /* background-color:rgb(223, 223, 223); */
+   background-color:rgb(219, 236, 214);
+}
+.login-center {
+   margin-top: 10vh;
+}
+
+.full-width {
+   width: 100%;
+}
