@@ -4,6 +4,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { AuthService } from 'src/app/auth/auth.service';
 import { combineLatest, filter, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
    selector: 'app-layout',
@@ -17,10 +18,15 @@ export class LayoutComponent implements OnInit, AfterViewInit {
    constructor(
       private observer: BreakpointObserver,
       private authService: AuthService,
-      private router: Router
+      private router: Router,
+      private http: HttpClient
       ) {}
 
-   ngOnInit(): void {}
+   ngOnInit(): void {
+      console.log('HOLA MUNDO')
+      const d = this.http.get('https://jsonplaceholder.typicode.com/users/2')
+      console.log(d)
+   }
 
    ngAfterViewInit() {
       // Solucion para cuando se cambia un valor en un componente del DOM

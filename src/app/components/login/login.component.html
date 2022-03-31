@@ -8,20 +8,20 @@
          <h2>Opita - QMS</h2>
       </div>
 
-      <form class="w3-container">
+      <form class="w3-container" [formGroup]="loginForm" (ngSubmit)="login(loginForm)">
          <div class="w3-section">
             <mat-form-field class="full-width" appearance="standard">
                <mat-label>E-Mail</mat-label>
-               <input matInput placeholder="example@test.com" type="email">
+               <input matInput placeholder="example@test.com" type="email" formControlName="email">
             </mat-form-field>
             <mat-form-field class="full-width" appearance="standard">
                <mat-label>Password</mat-label>
-               <input matInput placeholder="Enter your password" type="password">
+               <input matInput placeholder="Enter your password" type="password" formControlName="password">
             </mat-form-field>
             <!-- <label>Password</label>
             <input class="w3-input w3-border" type="text" placeholder="Enter Password" name="psw" required> -->
             <!-- <button class="w3-button w3-block w3-green w3-section w3-padding" type="submit">Login</button> -->
-            <button mat-raised-button color="primary" class="w3-block w3-green w3-section">Login</button>
+            <button mat-raised-button color="primary" class="w3-block w3-green w3-section" type="submit" [disabled]="loginForm.invalid">Login</button>
             <!-- <input class="w3-check w3-margin-top" type="checkbox" checked="checked"> Remember me -->
             <mat-checkbox class="w3-margin-top">Hide required marker</mat-checkbox>
          </div>
