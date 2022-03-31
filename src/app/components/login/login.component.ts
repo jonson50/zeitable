@@ -64,7 +64,7 @@ export class LoginComponent implements OnInit, OnDestroy {
                   authStatus.isAuthenticated && user?._id !== ''
             ),
             tap(([authStatus, user]) => {
-               this.router.navigate([this.redirectUrl || '/qms']);
+               this.router.navigate([this.redirectUrl || '/']);
             })
          )
          .subscribe();

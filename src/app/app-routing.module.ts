@@ -3,14 +3,21 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './auth/auth-guard.service';
 import { LayoutComponent } from './components/layout/layout.component';
 import { LoginComponent } from './components/login/login.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { TemporalComponent } from './temporal/temporal.component';
 
 const routes: Routes = [
+   { path: 'login', component: LoginComponent },
    {
-      path: 'qms',
+      path: '',
       component: LayoutComponent,
-      canActivate: [AuthGuard]
+      canActivate: [AuthGuard],
+      children: [
+         { path: '', redirectTo: 'temporal', pathMatch: 'full' },
+         { path: 'dashboard', component: DashboardComponent },
+         { path: 'temporal', component: TemporalComponent }
+      ]
    },
-   { path: 'login', component: LoginComponent},
    { path: '**', redirectTo: 'login' },
 ];
 
@@ -19,4 +26,9 @@ const routes: Routes = [
    exports: [RouterModule],
 })
 export class AppRoutingModule {}
-export const routingComponents = [LoginComponent, LayoutComponent];
+export const routingComponents = [
+   LoginComponent,
+   LayoutComponent,
+   DashboardComponent,
+   TemporalComponent,
+];

@@ -58,14 +58,7 @@
    <mat-sidenav-content>
       <!-- <div class="content mat-elevation-z3">Main content here!</div> -->
       <div class="w3-container w3-content" style="max-width: 1080px;">
-         <mat-toolbar class="op-header-content">
-            Option <strong>1</strong>
-            <span class="toolbar-spacer"></span>
-            <button mat-raised-button color="primary" (click)="login()">Nuevo</button>
-         </mat-toolbar>
-         <div class="content mat-elevation-z2">Main content here!</div>
-         <div class="content mat-elevation-z2">Main content here!</div>
-         <div class="content mat-elevation-z2">Main content here!</div>
+         <router-outlet></router-outlet> 
       </div>
    </mat-sidenav-content>
 </mat-sidenav-container>

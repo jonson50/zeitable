@@ -1,7 +1,8 @@
 .op-header {
    background: white;
    border-bottom: solid;
-   border-width: 1px; border-color: rgb(200,200,255);
+   border-width: 1px;
+   border-color: rgb(200, 200, 255);
    border-color: darkgray;
 }
 
@@ -11,13 +12,14 @@
 
 .toolbar-spacer {
    flex: 1 1 auto;
- }
+}
 
 mat-sidenav {
    width: 250px;
    border-right: none;
    border-color: darkgray;
-   border-width: 1px; border-color: rgb(200,200,255);
+   border-width: 1px;
+   border-color: rgb(200, 200, 255);
    background: #1e1e2d;
    color: whitesmoke;
    text-align: center;
@@ -39,7 +41,7 @@ mat-sidenav {
 
 mat-sidenav-container {
    height: calc(100vh - 64px);
-   background: #ebeef1;;
+   background: #ebeef1;
 }
 /*#########*/
 .menu-button {
@@ -75,7 +77,7 @@ mat-sidenav-container {
 }
 
 .w3-bar-block a.selected:hover {
-   color:whitesmoke
+   color: whitesmoke;
 }
 
 .w3-bar-block a:hover {
@@ -86,6 +88,6 @@ mat-sidenav-container {
    text-align: left;
    margin: 10px 0 0 15px;
    text-transform: uppercase;
-   font-size:x-small;
+   font-size: x-small;
    color: #9394a7;
 }

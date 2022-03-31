@@ -22,9 +22,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { AuthHttpInterceptor } from './interceptors/auth-http.interceptor';
-
-
-
 @NgModule({
    imports: [
       BrowserModule,

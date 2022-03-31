@@ -2,7 +2,6 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { AuthService } from 'src/app/auth/auth.service';
-import { combineLatest, filter, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -23,9 +22,6 @@ export class LayoutComponent implements OnInit, AfterViewInit {
       ) {}
 
    ngOnInit(): void {
-      console.log('HOLA MUNDO')
-      const d = this.http.get('https://jsonplaceholder.typicode.com/users/2')
-      console.log(d)
    }
 
    ngAfterViewInit() {
@@ -43,26 +39,8 @@ export class LayoutComponent implements OnInit, AfterViewInit {
       });
    }
 
-   login(){
-      this.authService.login('manager@test.com', '123456');
-
-      combineLatest(
-         [this.authService.authStatus$,
-            this.authService.currentUser$]
-      ).pipe(
-         filter(([authStatus, user]) =>
-            authStatus.isAuthenticated && user?._id !== ''
-         ),
-         tap(([authStatus, user]) =>{
-            this.router.navigate(['/manager'])
-         })
-      )
-      .subscribe();
-
-   }
-
    logout() {
       this.authService.logout(true);
-      this.router.navigate(['/']);
+      this.router.navigate(['/login']);
    }
 }
