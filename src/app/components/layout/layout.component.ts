@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { AuthService } from 'src/app/auth/auth.service';
+import { AuthJwtService } from 'src/app/auth/auth-jwt.service';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -16,7 +16,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
 
    constructor(
       private observer: BreakpointObserver,
-      private authService: AuthService,
+      private authJwtService: AuthJwtService,
       private router: Router,
       private http: HttpClient
       ) {}
@@ -40,7 +40,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
    }
 
    logout() {
-      this.authService.logout(true);
+      this.authJwtService.logout(true);
       this.router.navigate(['/login']);
    }
 }

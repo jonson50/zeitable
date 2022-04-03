@@ -8,7 +8,7 @@ import { IUser, User } from '../user/user/user';
 import { Role } from './auth.enum';
 import { CacheService } from './cache.service';
 
-export interface IAuthService {
+export interface IAuthJwtService {
    readonly authStatus$: BehaviorSubject<IAuthStatus>;
    readonly currentUser$: BehaviorSubject<IUser>;
    login(email: string, password: string): Observable<void>;
@@ -33,7 +33,7 @@ export const defaultAuthStatus: IAuthStatus = {
 };
 
 @Injectable()
-export abstract class AuthService extends CacheService implements IAuthService {
+export abstract class AuthJwtService extends CacheService implements IAuthJwtService {
    // Class Variables
    private getAndUpdateUserIfAuthenticated = pipe(
       filter((status: IAuthStatus) => status.isAuthenticated),

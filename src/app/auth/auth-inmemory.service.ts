@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { AuthService, IAuthStatus, IServerAuthResponse } from './auth.service';
+import { AuthJwtService, IAuthStatus, IServerAuthResponse } from './auth-jwt.service';
 import { sign } from 'fake-jwt-sign';
 import { Observable, of, throwError } from 'rxjs';
 import { Role } from './auth.enum';
 import { PhoneType, User } from '../user/user/user';
 
 @Injectable()
-export class InMemoryAuthService extends AuthService {
+export class InMemoryAuthJwtService extends AuthJwtService {
    private defaultUser = User.Build({
       _id: '5da01751da27cc462d265913',
       email: 'john@me.com',
@@ -33,7 +33,7 @@ export class InMemoryAuthService extends AuthService {
    
    constructor() {
       super()
-      console.warn("You are using the InMemoryAuthService. Do not use this service in production.")
+      console.warn("You are using the InMemoryAuthJwtService. Do not use this service in production.")
    }
 
    protected authProvider(

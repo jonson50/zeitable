@@ -9,17 +9,17 @@ import { Router } from '@angular/router'
 import { Observable, throwError } from 'rxjs'
 import { catchError } from 'rxjs/operators'
 
-import { AuthService } from './auth.service'
+import { AuthJwtService } from './auth-jwt.service'
 
 @Injectable()
 export class AuthHttpInterceptor implements HttpInterceptor {
 
-   constructor(private authService: AuthService, private router: Router) {}
+   constructor(private authJwtService: AuthJwtService, private router: Router) {}
 
    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
       console.log('INTERCEPTING here...')
       return next.handle(req);
-      // const jwt = this.authService.getToken();
+      // const jwt = this.authJwtService.getToken();
 
       // const authRequest = req.clone({ setHeaders: {authorization: `Bearer ${jwt}`} });
 

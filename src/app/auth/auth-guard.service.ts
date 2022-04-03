@@ -12,13 +12,13 @@ import {
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { Role } from './auth.enum';
-import { AuthService } from './auth.service';
+import { AuthJwtService } from './auth-jwt.service';
 
 @Injectable({
    providedIn: 'root',
 })
 export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
-   constructor(protected authService: AuthService, protected router: Router) {}
+   constructor(protected authJwtService: AuthJwtService, protected router: Router) {}
 
    canLoad(route: Route): boolean | Observable<boolean> | Promise<boolean> {
       return this.checkLogin();
@@ -39,7 +39,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
    }
 
    protected checkLogin(route?: ActivatedRouteSnapshot): Observable<boolean> {
-      return this.authService.authStatus$.pipe(
+      return this.authJwtService.authStatus$.pipe(
          map((autStatus) => {
             const roleMatch = this.checkRoleMatch(autStatus.userRole, route);
             const allowLogin = autStatus.isAuthenticated && roleMatch;

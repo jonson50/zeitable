@@ -7,8 +7,8 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // Services
-import { AuthService } from './auth/auth.service';
-import { InMemoryAuthService } from './auth/auth-inmemory.service';
+import { AuthJwtService } from './auth/auth-jwt.service';
+import { InMemoryAuthJwtService } from './auth/auth-inmemory.service';
 import { AuthGuard } from './auth/auth-guard.service';
 // Angular CDK
 import { LayoutModule } from '@angular/cdk/layout';
@@ -52,8 +52,8 @@ import { AuthHttpInterceptor } from './interceptors/auth-http.interceptor';
          multi: true,
       },
       {
-         provide: AuthService,
-         useClass: InMemoryAuthService
+         provide: AuthJwtService,
+         useClass: InMemoryAuthJwtService
       },
    ],
    bootstrap: [AppComponent],

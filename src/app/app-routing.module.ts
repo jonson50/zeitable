@@ -5,9 +5,14 @@ import { LayoutComponent } from './components/layout/layout.component';
 import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { TemporalComponent } from './temporal/temporal.component';
+import { LoginGuard } from './auth/login-guard.service';
 
 const routes: Routes = [
-   { path: 'login', component: LoginComponent },
+   { 
+      path: 'login',
+      component: LoginComponent,
+      canActivate: [LoginGuard]
+   },
    {
       path: '',
       component: LayoutComponent,

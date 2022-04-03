@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, combineLatest, filter, tap } from 'rxjs';
-import { AuthService } from 'src/app/auth/auth.service';
+import { AuthJwtService } from 'src/app/auth/auth-jwt.service';
 import { SubSink } from 'subsink';
 
 @Component({
@@ -18,7 +18,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
    constructor(
       private formBuilder: FormBuilder,
-      private authService: AuthService,
+      private authJwtService: AuthJwtService,
       private router: Router,
       private route: ActivatedRoute
    ) {
@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit, OnDestroy {
    }
 
    ngOnInit(): void {
-      this.authService.logout();
+      this.authJwtService.logout();
       this.buildLoginForm();
    }
 
@@ -50,13 +50,13 @@ export class LoginComponent implements OnInit, OnDestroy {
    }
 
    async login(submitedForm: FormGroup) {
-      this.authService
+      this.authJwtService
          .login(submitedForm.value.email, submitedForm.value.password)
          .pipe(catchError((err) => (this.loginError = err)));
 
       this.subs.sink = combineLatest([
-         this.authService.authStatus$,
-         this.authService.currentUser$,
+         this.authJwtService.authStatus$,
+         this.authJwtService.currentUser$,
       ])
          .pipe(
             filter(
