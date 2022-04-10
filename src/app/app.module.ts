@@ -8,8 +8,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // Services
 import { AuthJwtService } from './auth/auth-jwt.service';
-import { InMemoryAuthJwtService } from './auth/auth-inmemory.service';
 import { AuthGuard } from './auth/auth-guard.service';
+import { AuthHttpInterceptor } from './interceptors/auth-http.interceptor';
+import { AuthService } from './auth/auth-parse.service';
+import { InParseAuthService } from './auth/auth-inparse.service';
 // Angular CDK
 import { LayoutModule } from '@angular/cdk/layout';
 // Angular Material Modules
@@ -21,7 +23,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { AuthHttpInterceptor } from './interceptors/auth-http.interceptor';
+
 @NgModule({
    imports: [
       BrowserModule,
@@ -52,8 +54,8 @@ import { AuthHttpInterceptor } from './interceptors/auth-http.interceptor';
          multi: true,
       },
       {
-         provide: AuthJwtService,
-         useClass: InMemoryAuthJwtService
+         provide: AuthService,
+         useClass: InParseAuthService
       },
    ],
    bootstrap: [AppComponent],

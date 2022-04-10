@@ -6,19 +6,18 @@ import {
    CanLoad,
    Route,
    Router,
-   RouterStateSnapshot,
-   UrlTree,
+   RouterStateSnapshot
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { Role } from './auth.enum';
-import { AuthJwtService } from './auth-jwt.service';
+import { AuthService } from './auth-parse.service';
 
 @Injectable({
    providedIn: 'root',
 })
 export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
-   constructor(protected authJwtService: AuthJwtService, protected router: Router) {}
+   constructor(protected authService: AuthService, protected router: Router) {}
 
    canLoad(route: Route): boolean | Observable<boolean> | Promise<boolean> {
       return this.checkLogin();
@@ -39,10 +38,13 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
    }
 
    protected checkLogin(route?: ActivatedRouteSnapshot): Observable<boolean> {
-      return this.authJwtService.authStatus$.pipe(
+      return this.authService.authStatus$.pipe(
          map((autStatus) => {
             const roleMatch = this.checkRoleMatch(autStatus.userRole, route);
+            console.log(roleMatch)
+            console.log(autStatus)
             const allowLogin = autStatus.isAuthenticated && roleMatch;
+            console.log(allowLogin)
             if (!allowLogin) {
                this.router.navigate(['login'], {
                   queryParams: {

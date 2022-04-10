@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, combineLatest, filter, tap } from 'rxjs';
-import { AuthJwtService } from 'src/app/auth/auth-jwt.service';
+import { catchError, combineLatest, filter, map, tap } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth-parse.service';
 import { SubSink } from 'subsink';
 
 @Component({
@@ -18,7 +18,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
    constructor(
       private formBuilder: FormBuilder,
-      private authJwtService: AuthJwtService,
+      private authService: AuthService,
       private router: Router,
       private route: ActivatedRoute
    ) {
@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit, OnDestroy {
    }
 
    ngOnInit(): void {
-      this.authJwtService.logout();
+      this.authService.logout();
       this.buildLoginForm();
    }
 
@@ -50,24 +50,25 @@ export class LoginComponent implements OnInit, OnDestroy {
    }
 
    async login(submitedForm: FormGroup) {
-      this.authJwtService
+      this.authService
          .login(submitedForm.value.email, submitedForm.value.password)
-         .pipe(catchError((err) => (this.loginError = err)));
+         .pipe(
+            map((res:any) => console.log(res)),
+            catchError((err) => (this.loginError = err))
+         );
 
       this.subs.sink = combineLatest([
-         this.authJwtService.authStatus$,
-         this.authJwtService.currentUser$,
-      ])
-         .pipe(
-            filter(
-               ([authStatus, user]) =>
-                  authStatus.isAuthenticated && user?._id !== ''
-            ),
-            tap(([authStatus, user]) => {
-               this.router.navigate([this.redirectUrl || '/']);
-            })
-         )
-         .subscribe();
+         this.authService.authStatus$,
+         this.authService.currentUser$,
+      ]).pipe(
+         filter(
+            ([authStatus, user]) =>
+               authStatus.isAuthenticated && user?.id !== ''
+         ),
+         tap(([authStatus, user]) => {
+            this.router.navigate([this.redirectUrl || '/']);
+         })
+      ).subscribe();
    }
 
    // Unsubscribe when the component dies
