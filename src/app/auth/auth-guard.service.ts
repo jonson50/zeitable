@@ -41,10 +41,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
       return this.authService.authStatus$.pipe(
          map((autStatus) => {
             const roleMatch = this.checkRoleMatch(autStatus.userRole, route);
-            console.log(roleMatch)
-            console.log(autStatus)
             const allowLogin = autStatus.isAuthenticated && roleMatch;
-            console.log(allowLogin)
             if (!allowLogin) {
                this.router.navigate(['login'], {
                   queryParams: {

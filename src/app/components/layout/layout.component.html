@@ -22,7 +22,7 @@
          class="avatar mat-elevation-z8"
          src="https://www.pngarts.com/files/10/Default-Profile-Picture-PNG-Download-Image.png"
       />
-      <h4 class="name">John Bermeo</h4>
+      <h4 class="name">{{ (currentUser | async)?.person?.name }}</h4>
 
       <mat-divider></mat-divider>
       <div class="w3-bar-block w3-margin-top">
@@ -58,7 +58,7 @@
    <mat-sidenav-content>
       <!-- <div class="content mat-elevation-z3">Main content here!</div> -->
       <div class="w3-container w3-content" style="max-width: 1080px;">
-         <router-outlet></router-outlet> 
+         <router-outlet></router-outlet>
       </div>
    </mat-sidenav-content>
 </mat-sidenav-container>

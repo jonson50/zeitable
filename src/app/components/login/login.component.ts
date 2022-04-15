@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit, OnDestroy {
    }
 
    ngOnInit(): void {
-      this.authService.logout();
+      //this.authService.logout();
       this.buildLoginForm();
    }
 
@@ -53,7 +53,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.authService
          .login(submitedForm.value.email, submitedForm.value.password)
          .pipe(
-            map((res:any) => console.log(res)),
+            //map((res:any) => console.log(res)),
             catchError((err) => (this.loginError = err))
          );
 

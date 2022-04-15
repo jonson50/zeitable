@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import decode from 'jwt-decode';
 import { BehaviorSubject, Observable, pipe, throwError } from 'rxjs';
 import { catchError, filter, map, mergeMap, tap } from 'rxjs/operators';
@@ -12,7 +13,7 @@ export interface IAuthService {
    readonly authStatus$: BehaviorSubject<IAuthStatus>;
    readonly currentUser$: BehaviorSubject<IUser>;
    login(email: string, password: string): Observable<void>;
-   logout(clearToken?: boolean): void;
+   logout(): Observable<void>;
    getToken(): string;
 }
 
@@ -46,9 +47,9 @@ export abstract class AuthService extends CacheService implements IAuthService {
 
    readonly authStatus$ = new BehaviorSubject<IAuthStatus>(defaultAuthStatus);
    readonly currentUser$ = new BehaviorSubject<IUser>(new User());
-   protected readonly resumeCurrentUser$ = this.authStatus$.pipe(
-      this.getAndUpdateUserIfAuthenticated
-   );
+   // protected readonly resumeCurrentUser$ = this.authStatus$.pipe(
+   //    this.getAndUpdateUserIfAuthenticated
+   // );
 
    constructor() {
       super();
@@ -60,11 +61,12 @@ export abstract class AuthService extends CacheService implements IAuthService {
 
    // Protected Abstract Methods
    protected abstract authProvider(
-      email: string,
-      password: string
-   ): Observable<IParseAuthResponse>;
+                        email: string,
+                        password: string
+                     ): Observable<IParseAuthResponse>;
    // protected abstract transformJwtToken(token: unknown): IAuthStatus;
    protected abstract getCurrentUser(): Observable<User>;
+   protected abstract authLogoutProvider(): Observable<void>
 
    // Class methods
    login(email: string, password: string): Observable<void> {
@@ -72,7 +74,6 @@ export abstract class AuthService extends CacheService implements IAuthService {
 
       const loginResponse$ = this.authProvider(email, password).pipe(
          map((value: IParseAuthResponse) => {
-            console.log(value)
             this.setToken(value.user.sessionToken);
             this.setUser(new User(value))
             const status = {
@@ -98,13 +99,27 @@ export abstract class AuthService extends CacheService implements IAuthService {
       return loginResponse$;
    }
 
-   logout(clearToken?: boolean) {
-      if (clearToken) {
-         this.clearToken();
-         this.clearStatus();
-         this.clearUser();
-      }
-      this.authStatus$.next(defaultAuthStatus);
+   logout(): Observable<void> {
+      const logoutResponse$ = this.authLogoutProvider()
+      logoutResponse$.subscribe({
+         next: (res) => {
+            if (this.getToken()) {
+               this.clearToken();
+               this.clearStatus();
+               this.clearUser();
+            }
+            this.authStatus$.next(defaultAuthStatus);
+            this.currentUser$.next(new User())
+            //this.goTo(['/login'])
+         },
+         error: (err) => {
+            console.error(err)
+            this.logout();
+            return throwError(() => new Error(err));
+         },
+      })
+
+      return logoutResponse$;
    }
 
    getToken(): string {
