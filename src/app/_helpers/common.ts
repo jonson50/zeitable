@@ -3,6 +3,7 @@ import { throwError } from "rxjs";
 
 export function transformError(error: HttpErrorResponse | string) {
    let errorMessage = 'An unknown error has occurred'
+   console.log('errorrrrr:', error)
    if (typeof error === 'string') {
      errorMessage = error
    } else if (error.error instanceof ErrorEvent) {
@@ -12,5 +13,5 @@ export function transformError(error: HttpErrorResponse | string) {
    } else if (error instanceof Error) {
      errorMessage = error.message
    }
-   return throwError(errorMessage)
+   return throwError(() => new Error(errorMessage));
  }

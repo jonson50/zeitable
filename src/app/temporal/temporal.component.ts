@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../auth/auth-parse.service';
+import { AuthService } from '@app/_services/auth.service';
 
 @Component({
    selector: 'app-temporal',
@@ -12,13 +12,11 @@ export class TemporalComponent implements OnInit {
    ngOnInit(): void {}
 
    prueba(): void {
-      let a = 'una cadena';
-      let b = { d: 'sfsdf', c: {e: 'werwer', f: 'sdfsdfsdf'}}
-      console.log(a)
-      console.log(b)
-      //this.service.setAlgo(b);
+      this.service.personas().subscribe(r => {
+         console.log(r)
+      });
    }
    prueba2() {
-      console.log(this.service.getToken());
+      //console.log(this.service.getToken());
    }
 }

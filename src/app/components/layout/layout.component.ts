@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { AuthService } from 'src/app/auth/auth-parse.service';
+import { AuthService } from '@app/_services/auth.service';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { IUser } from 'src/app/user/user/user';
+import { Account } from '@app/_models/account';
 
 @Component({
    selector: 'app-layout',
@@ -16,7 +16,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
    @ViewChild(MatSidenav)
    sidenav!: MatSidenav;
 
-   currentUser!: Observable<IUser>;
+   currentAccount!: Observable<Account>;
 
    constructor(
       private observer: BreakpointObserver,
@@ -26,7 +26,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
       ) {}
 
    ngOnInit(): void {
-      this.currentUser = this.authService.currentUser$.asObservable();
+      this.currentAccount = this.authService.account;
    }
 
    ngAfterViewInit() {
@@ -46,6 +46,5 @@ export class LayoutComponent implements OnInit, AfterViewInit {
 
    async logout() {
       this.authService.logout();
-
    }
 }

@@ -4,10 +4,10 @@ import decode from 'jwt-decode';
 import { BehaviorSubject, Observable, pipe, throwError } from 'rxjs';
 import { catchError, filter, map, mergeMap, tap } from 'rxjs/operators';
 
-import { transformError } from '../common/common';
-import { IUser, User, IParsePerson, IParseUser } from '../user/user/user';
+import { transformError } from '../_helpers/common';
+import { IUser, User, IParsePerson, IParseUser } from '../_models/user';
 import { Role } from './auth.enum';
-import { CacheService } from './cache.service';
+import { CacheService } from '../_services/cache.service';
 
 export interface IAuthService {
    readonly authStatus$: BehaviorSubject<IAuthStatus>;

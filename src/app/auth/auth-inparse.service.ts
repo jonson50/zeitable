@@ -6,8 +6,8 @@ import {
 } from './auth-parse.service';
 import { Observable, of, Subject, throwError, lastValueFrom, mergeMap, zip, map } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
-import { User } from '../user/user/user';
-import { AppSettings } from '../common/app-settings';
+import { User } from '../_models/user';
+import { environment } from '@environments/environment';
 import { Router } from '@angular/router';
 
 @Injectable()
@@ -43,8 +43,8 @@ export class InParseAuthService extends AuthService {
          username: email,
          password: password,
       };
-      const baseUrl = `${AppSettings.apiURL}/login`;
-      const urlPerson = `${AppSettings.apiURL}/classes/Person`;
+      const baseUrl = `${environment.apiURL}/login`;
+      const urlPerson = `${environment.apiURL}/classes/Person`;
 
       const loginRequest = this.http.post<IParseAuthResponse>(baseUrl, body).pipe(
          mergeMap((resp: any) => {
@@ -72,7 +72,7 @@ export class InParseAuthService extends AuthService {
    }
 
    protected authLogoutProvider(): Observable<void> {
-      const baseUrl = `${AppSettings.apiURL}/logout`;
+      const baseUrl = `${environment.apiURL}/logout`;
       const body = {};
       return this.http.post<void>(baseUrl, body).pipe(
          tap(() => this.router.navigate(['/login']))

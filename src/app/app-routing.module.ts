@@ -1,11 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from './auth/auth-guard.service';
 import { LayoutComponent } from './components/layout/layout.component';
 import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { TemporalComponent } from './temporal/temporal.component';
-import { LoginGuard } from './auth/login-guard.service';
+import { LoginGuard, AuthGuard } from '@app/_helpers';
 
 const routes: Routes = [
    { 
@@ -18,9 +17,9 @@ const routes: Routes = [
       component: LayoutComponent,
       canActivate: [AuthGuard],
       children: [
-         { path: '', redirectTo: 'temporal', pathMatch: 'full' },
+         // { path: '', redirectTo: 'temporal', pathMatch: 'full' },
          { path: 'dashboard', component: DashboardComponent },
-         { path: 'temporal', component: TemporalComponent }
+         { path: '', component: TemporalComponent }
       ]
    },
    { path: '**', redirectTo: 'login' },

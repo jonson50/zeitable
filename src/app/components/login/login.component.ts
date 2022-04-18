@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, combineLatest, filter, map, tap } from 'rxjs';
-import { AuthService } from 'src/app/auth/auth-parse.service';
+import { catchError, combineLatest, filter, first, map, tap } from 'rxjs';
+import { AuthService } from '@app/_services/auth.service';
 import { SubSink } from 'subsink';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
    selector: 'app-login',
@@ -53,22 +54,32 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.authService
          .login(submitedForm.value.email, submitedForm.value.password)
          .pipe(
+            first(),
             //map((res:any) => console.log(res)),
-            catchError((err) => (this.loginError = err))
-         );
-
-      this.subs.sink = combineLatest([
-         this.authService.authStatus$,
-         this.authService.currentUser$,
-      ]).pipe(
-         filter(
-            ([authStatus, user]) =>
-               authStatus.isAuthenticated && user?.id !== ''
-         ),
-         tap(([authStatus, user]) => {
-            this.router.navigate([this.redirectUrl || '/']);
+         ).subscribe({
+            next: (r) => {
+               //console.log('respuesta login', r)
+               // get return url from query parameters or default to home page
+               const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+               this.router.navigateByUrl(returnUrl);
+            },
+            error: (error:HttpErrorResponse) => {
+               console.error(error.error);
+            }
          })
-      ).subscribe();
+
+      // this.subs.sink = combineLatest([
+      //    this.authService.authStatus$,
+      //    this.authService.currentUser$,
+      // ]).pipe(
+      //    filter(
+      //       ([authStatus, user]) =>
+      //          authStatus.isAuthenticated && user?.id !== ''
+      //    ),
+      //    tap(([authStatus, user]) => {
+      //       this.router.navigate([this.redirectUrl || '/']);
+      //    })
+      // ).subscribe();
    }
 
    // Unsubscribe when the component dies
