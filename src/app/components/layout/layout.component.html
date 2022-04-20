@@ -5,34 +5,50 @@
    </button>
    Opita<strong>QMS</strong>
    <span class="toolbar-spacer"></span>
-   <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+   <button
+      mat-icon-button
+      [matMenuTriggerFor]="menu"
+      aria-label="Example icon-button with a menu"
+   >
       <mat-icon>more_vert</mat-icon>
-    </button>
-    <mat-menu #menu="matMenu">
+   </button>
+   <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="logout()">
-        <mat-icon>notifications_off</mat-icon>
-        <span>Logout</span>
+         <mat-icon>notifications_off</mat-icon>
+         <span>Logout</span>
       </button>
-    </mat-menu>
+   </mat-menu>
 </mat-toolbar>
 
 <mat-sidenav-container>
    <mat-sidenav #sidenav mode="side" opened>
       <img
          class="avatar mat-elevation-z8"
-         src="https://www.pngarts.com/files/10/Default-Profile-Picture-PNG-Download-Image.png"
+         src="../../../assets/images/unknown.png"
       />
       <h4 class="name">{{ (currentAccount | async)?.person?.name }}</h4>
 
       <mat-divider></mat-divider>
       <div class="w3-bar-block w3-margin-top">
          <p class="menu-label">General</p>
-         <a mat-button class="menu-button w3-bar-item selected">
+         <a
+            mat-button
+            class="menu-button w3-bar-item"
+            routerLink="/tempo"
+            routerLinkActive="selected"
+            [routerLinkActiveOptions]="{ exact: true }"
+         >
             <mat-icon>home</mat-icon>
             <span>Home</span>
          </a>
 
-         <a mat-button class="menu-button w3-bar-item">
+         <a
+            mat-button
+            class="menu-button w3-bar-item"
+            routerLink="/"
+            routerLinkActive="selected"
+            [routerLinkActiveOptions]="{ exact: true }"
+         >
             <mat-icon>person</mat-icon>
             <span>Profile</span>
          </a>
@@ -57,7 +73,8 @@
    </mat-sidenav>
    <mat-sidenav-content>
       <!-- <div class="content mat-elevation-z3">Main content here!</div> -->
-      <div class="w3-container w3-content" style="max-width: 1080px;">
+      <!-- <div class="w3-container w3-content" style="max-width: 1080px"> -->
+      <div class="w3-container">
          <router-outlet></router-outlet>
       </div>
    </mat-sidenav-content>

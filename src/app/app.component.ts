@@ -6,8 +6,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
    styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
+   typeSelected: string;
 
-   constructor() {}
+   constructor() {
+      this.typeSelected = 'ball-scale-multiple';
+   }
 
    ngOnInit(): void {}
 }

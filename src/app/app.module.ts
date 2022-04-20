@@ -10,12 +10,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // Services
 import { AuthJwtService } from './auth/auth-jwt.service';
 import {
-   AuthHttpInterceptor, 
+   AuthHttpInterceptor,
    ErrorInterceptor,
    AuthGuard } from '@app/_helpers';
 import { AuthService } from '@app/_services';
 // Angular CDK
 import { LayoutModule } from '@angular/cdk/layout';
+import { NgxSpinnerModule } from 'ngx-spinner';
 // Angular Material Modules
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -30,14 +31,16 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 
 
+
 @NgModule({
    imports: [
       BrowserModule,
-      AppRoutingModule,
       HttpClientModule,
       BrowserAnimationsModule,
       FormsModule,
       ReactiveFormsModule,
+      NgxSpinnerModule,
+      AppRoutingModule,
       MatToolbarModule,
       MatSidenavModule,
       MatButtonModule,

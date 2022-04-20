@@ -91,3 +91,7 @@ mat-sidenav-container {
    font-size: x-small;
    color: #9394a7;
 }
+
+mat-divider {
+   border-top-color: #9394a7;
+}

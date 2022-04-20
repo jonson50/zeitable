@@ -6,21 +6,38 @@ import {
    HttpInterceptor,
    HttpHeaders
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { finalize, Observable } from 'rxjs';
 import { AuthService } from '@app/_services';
 import { environment } from '@environments/environment';
-import { Account } from '@app/_models/account';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Injectable()
 export class AuthHttpInterceptor implements HttpInterceptor {
 
-   constructor(private authService: AuthService) { }
+   totalRequests = 0;
+   completedRequests = 0;
+   constructor(private authService: AuthService, private spinnerService: NgxSpinnerService) { }
 
    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+      this.spinnerService.show();
+      this.totalRequests++;
+
       const newRequest = request.clone({
          headers: this.addExtraHeaders(request.headers)
       })
-      return next.handle(newRequest);
+
+      return next.handle(newRequest).pipe(
+         finalize(() => {
+            // Handling spinner for multiple request to server
+            this.completedRequests++;
+            // console.log(this.completedRequests, this.totalRequests);
+            if (this.completedRequests === this.totalRequests) {
+               this.spinnerService.hide();
+               this.completedRequests = 0;
+               this.totalRequests = 0;
+             }
+         })
+       );
    }
 
    private addExtraHeaders(headers: HttpHeaders): HttpHeaders {
@@ -31,5 +48,5 @@ export class AuthHttpInterceptor implements HttpInterceptor {
          headers = headers.append('X-Parse-Session-Token', token);
       }
       return headers;
-    } 
+    }
 }
