@@ -10,7 +10,7 @@ import { Account } from '@app/_models/account';
 @Component({
    selector: 'app-layout',
    templateUrl: './layout.component.html',
-   styleUrls: ['./layout.component.css'],
+   styleUrls: ['./layout.component.scss'],
 })
 export class LayoutComponent implements OnInit, AfterViewInit {
    @ViewChild(MatSidenav)

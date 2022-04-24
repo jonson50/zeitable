@@ -4,7 +4,7 @@ import { AuthService } from '@app/_services/auth.service';
 @Component({
    selector: 'app-temporal',
    templateUrl: './temporal.component.html',
-   styleUrls: ['./temporal.component.css'],
+   styleUrls: ['./temporal.component.scss'],
 })
 export class TemporalComponent implements OnInit {
    constructor(private service: AuthService) {}

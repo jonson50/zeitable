@@ -1,4 +1,4 @@
-<mat-toolbar class="mat-elevation-z8">
+<mat-toolbar class="op-header">
    <button mat-icon-button (click)="sidenav.toggle()">
       <mat-icon *ngIf="!sidenav.opened"> format_indent_increase </mat-icon>
       <mat-icon *ngIf="sidenav.opened"> format_indent_decrease </mat-icon>
@@ -21,7 +21,7 @@
 </mat-toolbar>
 
 <mat-sidenav-container>
-   <mat-sidenav #sidenav mode="side" opened>
+   <mat-sidenav #sidenav mode="side">
       <img
          class="avatar mat-elevation-z8"
          src="../../../assets/images/unknown.png"

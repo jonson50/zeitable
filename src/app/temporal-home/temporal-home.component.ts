@@ -4,7 +4,7 @@ import { AuthService } from '@app/_services/auth.service';
 @Component({
    selector: 'app-temporal-home',
    templateUrl: './temporal-home.component.html',
-   styleUrls: ['./temporal-home.component.css'],
+   styleUrls: ['./temporal-home.component.scss'],
 })
 export class TemporalHomeComponent implements OnInit {
    constructor(private service: AuthService) {}
