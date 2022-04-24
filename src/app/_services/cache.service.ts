@@ -1,39 +1,40 @@
-import { AES, enc } from 'crypto-js'
-import { environment } from '@environments/environment';
-
 export abstract class CacheService {
    protected getItem<T>(key: string): T | string | null {
-      const data = localStorage.getItem(key);
+      let data = null;
+      let sessionData = sessionStorage.getItem(key);
+      let localData = localStorage.getItem(key);
+      if (localData != null) {
+         data = localData;
+      } else if (sessionData != null) {
+         data = sessionData;
+      }
       if (data != null) {
-         const decrypted = AES.decrypt(data, environment.DEC);
-         const decryptedText = decrypted.toString(enc.Utf8);
-         //if (typeof decryptedText === 'string') return decryptedText;
-         const toReturn = JSON.parse(decryptedText);
-         if(toReturn.string !== undefined) {
-            return toReturn.string;
+         if (typeof data === 'string') {
+            return data;
          }
-         return toReturn;
+         return JSON.parse(data);
       }
       return null;
    }
 
-   protected setItem(key: string, data: object | string) {
-      let encrypted = '';
-      if (typeof data === 'string') {
-         data = { string: data }
-         // encrypted = AES.encrypt(data, environment.DEC).toString();
+   protected setItem(key: string, data: object | string, rememberme: boolean = false) {
+      if (typeof data !== 'string') {
+         data = JSON.stringify(data);
       }
-      //else {
-      encrypted = AES.encrypt(JSON.stringify(data), environment.DEC).toString();
-      //}
-      localStorage.setItem(key, encrypted);
+      if(rememberme) {
+         localStorage.setItem(key, data);
+      } else {
+         sessionStorage.setItem(key, data);
+      }
    }
 
    protected removeItem(key: string) {
       localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
    }
 
    protected clear() {
       localStorage.clear();
+      sessionStorage.clear();
    }
 }

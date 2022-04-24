@@ -13,6 +13,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class LoginComponent implements OnInit, OnDestroy {
    private subs = new SubSink();
+   rememberMe: boolean = false;
    loginForm!: FormGroup;
    loginError = '';
    redirectUrl = '';
@@ -51,6 +52,7 @@ export class LoginComponent implements OnInit, OnDestroy {
    }
 
    async login(submitedForm: FormGroup) {
+      this.authService.rememberMe = this.rememberMe;
       this.authService
          .login(submitedForm.value.email, submitedForm.value.password)
          .pipe(
@@ -58,7 +60,6 @@ export class LoginComponent implements OnInit, OnDestroy {
             //map((res:any) => console.log(res)),
          ).subscribe({
             next: (r) => {
-               //console.log('respuesta login', r)
                // get return url from query parameters or default to home page
                const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
                this.router.navigateByUrl(returnUrl);
@@ -67,19 +68,6 @@ export class LoginComponent implements OnInit, OnDestroy {
                console.error(error.error);
             }
          })
-
-      // this.subs.sink = combineLatest([
-      //    this.authService.authStatus$,
-      //    this.authService.currentUser$,
-      // ]).pipe(
-      //    filter(
-      //       ([authStatus, user]) =>
-      //          authStatus.isAuthenticated && user?.id !== ''
-      //    ),
-      //    tap(([authStatus, user]) => {
-      //       this.router.navigate([this.redirectUrl || '/']);
-      //    })
-      // ).subscribe();
    }
 
    // Unsubscribe when the component dies

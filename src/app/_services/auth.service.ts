@@ -13,16 +13,9 @@ import { BehaviorSubject,
 import { catchError, filter, tap  } from 'rxjs/operators'; // Operators
 
 import { transformError } from '../_helpers/common';
-import { 
-   IParsePerson, 
-   IParseUser, 
-   IRole, 
-   IParseAuthResponse,
-   Account,
-   Role
- } from '@app/_models/account';
+import { Account } from '@app/_models/account';
 import { CacheService } from './cache.service';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '@environments/environment';
 
 
@@ -62,20 +55,15 @@ export abstract class AuthService extends CacheService {
 
    readonly accountSubject: BehaviorSubject<Account>;
    readonly account: Observable<Account>
+   public rememberMe: boolean = false;
 
    constructor(
       private http: HttpClient,
       private router: Router
    ) {
       super();
-      console.log('CONSTRUCTOR AUTHSERVICE')
       this.accountSubject = new BehaviorSubject<Account>(new Account());
       this.account = this.accountSubject.asObservable();
-      //if(this.getToken()) {
-         //console.log('validando....')
-         //this.validateSession().subscribe();
-         //setTimeout(() => this.validateSession().subscribe(), 0)
-      //}
    }
 
    public get accountValue(): Account {
@@ -96,6 +84,7 @@ export abstract class AuthService extends CacheService {
          tap({
             next: user => {
               // if authenticated then save token
+              console.log('rememberme?: ', this.rememberMe)
               this.setToken(user.sessionToken);
             },
             error: error => {
@@ -111,7 +100,6 @@ export abstract class AuthService extends CacheService {
       const baseUrl = `${environment.apiURL}/logout`;
       const body = {};
       const logoutResponse$ = this.http.post<void>(baseUrl, body)
-      // const logoutResponse$ = this.authLogoutProvider()
       logoutResponse$.subscribe({
          next: (res) => {
             this.accountSubject.next(new Account());
@@ -133,7 +121,7 @@ export abstract class AuthService extends CacheService {
    }
 
    protected setToken(token: string) {
-      this.setItem('token', token);
+      this.setItem('token', token, this.rememberMe);
    }
 
    public clearToken() {

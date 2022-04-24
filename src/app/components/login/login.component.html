@@ -22,8 +22,7 @@
             <input class="w3-input w3-border" type="text" placeholder="Enter Password" name="psw" required> -->
             <!-- <button class="w3-button w3-block w3-green w3-section w3-padding" type="submit">Login</button> -->
             <button mat-raised-button color="primary" class="w3-block w3-section" type="submit" [disabled]="loginForm.invalid">Login</button>
-            <!-- <input class="w3-check w3-margin-top" type="checkbox" checked="checked"> Remember me -->
-            <mat-checkbox class="w3-margin-top">Hide required marker</mat-checkbox>
+            <mat-checkbox class="w3-margin-top" [(ngModel)]="rememberMe" [ngModelOptions]="{standalone: true}">Remember me</mat-checkbox>
          </div>
       </form>
 

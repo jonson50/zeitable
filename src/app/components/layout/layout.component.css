@@ -1,9 +1,10 @@
 .op-header {
    background: white;
-   border-bottom: solid;
+   /*border-bottom: solid;
    border-width: 1px;
    border-color: rgb(200, 200, 255);
    border-color: darkgray;
+   */
 }
 
 .op-header-content {

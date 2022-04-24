@@ -74,6 +74,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       let roles = account.roles;
       let isValidRoles = false;
       let roleMatch = false;
+      this.messageService.showToast('Welcome back..')
       if (route?.data?.['roles']) {
          console.log('tiene route.data.roles')
          roles.forEach(e => {
