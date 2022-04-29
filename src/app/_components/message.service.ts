@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core'
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar'
 import { Observable } from 'rxjs'
-
 import { SimpleDialogComponent } from './simple-dialog.component'
 
 @Injectable({
@@ -11,13 +10,13 @@ import { SimpleDialogComponent } from './simple-dialog.component'
 export class MessageService {
    constructor(private snackBar: MatSnackBar, private dialog: MatDialog) { }
 
-   showToast(message: string, action = 'Close', config?: MatSnackBarConfig) {
+   showToast(message: string, type:string, action = 'X', config?: MatSnackBarConfig) {
       // this.snackBar.open(message, action, config || { duration: 7000 })
       let configuration = new MatSnackBarConfig();
-      configuration.duration = 7000;
+      configuration.duration = 5000;
       configuration.horizontalPosition = 'center';
       configuration.verticalPosition = 'top';
-      configuration.panelClass = ['w3-red']
+      configuration.panelClass = [type]
 
       this.snackBar.open(message, action, configuration);
    }

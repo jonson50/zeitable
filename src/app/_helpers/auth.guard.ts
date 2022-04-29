@@ -12,13 +12,14 @@ import { AuthService } from '@app/_services/auth.service';
 import { Account, IRole } from '@app/_models/account';
 import { transformError } from './common';
 import { MessageService } from '@app/_components/message.service';
+import { ToastType } from '@app/_components/message.enum';
 
 @Injectable({
    providedIn: 'root',
 })
 export class AuthGuard implements CanActivate, CanActivateChild {
    constructor(
-      private authService: AuthService, 
+      private authService: AuthService,
       private router: Router,
       private messageService: MessageService) { }
 
@@ -53,7 +54,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
                take(1)
             );
          } else {
-            this.messageService.showToast('You must login to continue')
+            this.messageService.showToast('You must login to continue', ToastType.danger)
             this.router.navigate(['/login']);
             return true;
          }
@@ -74,7 +75,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       let roles = account.roles;
       let isValidRoles = false;
       let roleMatch = false;
-      this.messageService.showToast('Welcome back..')
+      this.messageService.showToast(`Welcome back ${account.fullName}`, ToastType.success)
       if (route?.data?.['roles']) {
          console.log('tiene route.data.roles')
          roles.forEach(e => {
