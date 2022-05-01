@@ -1,4 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/theming';
+
+@include mat-core();
+
+$mat-theming-primary: mat-palette($mat-deep-purple);
+$mat-theming-accent: mat-palette($mat-pink, A200, A100, A400);
+
+$mat-theming-warm: mat-palette($mat-red);
+
+$mat-theming-theme: mat-light-theme($mat-theming-primary, $mat-theming-accent, $mat-theming-warm);
+$mat-theming-theme-dark: mat-dark-theme($mat-theming-primary, $mat-theming-accent, $mat-theming-warm);
+
+@include angular-material-theme($mat-theming-theme-dark);
 
 html, body { height: 100%; }
 body { 
