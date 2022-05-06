@@ -5,6 +5,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule, routingComponents } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SimpleDialogComponent } from '@app/_components/simple-dialog.component';
+import { MainToastComponent } from '@app/_components/toast.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // Services
@@ -28,6 +29,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
 
 
 
@@ -52,10 +54,12 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
       MatCheckboxModule,
       MatDialogModule,
       MatSnackBarModule,
+      MatCardModule,
    ],
    declarations: [
       AppComponent,
       SimpleDialogComponent,
+      MainToastComponent,
       routingComponents,
    ],
    providers: [

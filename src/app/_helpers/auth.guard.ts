@@ -54,7 +54,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
                take(1)
             );
          } else {
-            this.messageService.showToast('You must login to continue', ToastType.danger)
+            this.messageService.showToast('You must login to continue', ToastType.danger, 5000)
             this.router.navigate(['/login']);
             return true;
          }

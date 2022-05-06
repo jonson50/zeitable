@@ -31,20 +31,6 @@ mat-sidenav {
    text-align: center;
 }
 
-.content {
-   height: 500px;
-   border-radius: 10px;
-   margin-top: 20px;
-
-   display: flex;
-   justify-content: center;
-   align-items: center;
-
-   font-size: 2rem;
-   color: lightgray;
-   background: rgb(248, 246, 243);
-}
-
 mat-sidenav-container {
    height: calc(100vh - 64px);
    /* background: #ebeef1;*/
@@ -77,7 +63,7 @@ mat-sidenav-container {
 .w3-bar-block a.selected {
    color: whitesmoke;
    font-weight: 500;
-   background: #673ab7;
+   background: #673ab7;;
    border-radius: 0px;
    border-left: 5px solid whitesmoke;
 }

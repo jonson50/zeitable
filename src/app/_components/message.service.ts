@@ -1,24 +1,33 @@
-import { Injectable } from '@angular/core'
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar'
-import { Observable } from 'rxjs'
-import { SimpleDialogComponent } from './simple-dialog.component'
+import { Component, Injectable } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { Observable } from 'rxjs';
+import { SimpleDialogComponent } from './simple-dialog.component';
+import { MainToastComponent } from './toast.component';
+
 
 @Injectable({
    providedIn: 'root',
 })
 export class MessageService {
-   constructor(private snackBar: MatSnackBar, private dialog: MatDialog) { }
+   constructor(private snackBar: MatSnackBar, private dialog: MatDialog) {}
 
-   showToast(message: string, type:string, action = 'X', config?: MatSnackBarConfig) {
+   showToast(
+      message: string,
+      type: string,
+      duration = 2000,
+      config?: MatSnackBarConfig
+   ) {
       // this.snackBar.open(message, action, config || { duration: 7000 })
       let configuration = new MatSnackBarConfig();
-      configuration.duration = 5000;
+      configuration.data = message;
+      configuration.duration = duration;
       configuration.horizontalPosition = 'center';
       configuration.verticalPosition = 'top';
-      configuration.panelClass = [type]
+      configuration.panelClass = [type];
 
-      this.snackBar.open(message, action, configuration);
+      //this.snackBar.open(message, action, configuration);
+      this.snackBar.openFromComponent(MainToastComponent, configuration)
    }
 
    showDialog(
@@ -34,8 +43,8 @@ export class MessageService {
             width: '300px',
             data: { title, content, okText, cancelText },
          }
-      )
+      );
 
-      return dialogRef.afterClosed()
+      return dialogRef.afterClosed();
    }
 }
