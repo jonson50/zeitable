@@ -1,11 +1,11 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, HostBinding, Inject, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { AuthService } from '@app/_services/auth.service';
-import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Account } from '@app/_models/account';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
    selector: 'app-layout',
@@ -13,19 +13,25 @@ import { Account } from '@app/_models/account';
    styleUrls: ['./layout.component.scss'],
 })
 export class LayoutComponent implements OnInit, AfterViewInit {
+   private isDark = false;
+   // @HostBinding('class')
+   // get themeMode() {
+   //    return this.isDark ? 'theme-dark' : 'theme-light';
+   // }
    @ViewChild(MatSidenav)
    sidenav!: MatSidenav;
 
    currentAccount!: Observable<Account>;
 
    constructor(
+      @Inject(DOCUMENT) private document: Document, 
+      private renderer: Renderer2,
       private observer: BreakpointObserver,
-      private authService: AuthService,
-      private router: Router,
-      private http: HttpClient
+      private authService: AuthService
       ) {}
 
    ngOnInit(): void {
+      this.renderer.setAttribute(this.document.body, 'class', 'theme-light');
       this.currentAccount = this.authService.account;
    }
 
@@ -46,5 +52,10 @@ export class LayoutComponent implements OnInit, AfterViewInit {
 
    async logout() {
       this.authService.logout();
+   }
+
+   onDarkModeSwitched({checked}: MatSlideToggleChange) {
+      const hostClass = checked ? 'theme-dark' : 'theme-light';
+      this.renderer.setAttribute(this.document.body, 'class', hostClass);
    }
 }

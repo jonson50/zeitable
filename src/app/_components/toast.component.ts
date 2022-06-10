@@ -11,7 +11,7 @@ import {
             notifications
          </mat-icon>
          <p class="information">
-            <strong>Notification</strong><br />
+            Notification<br />
             {{ data }}
          </p>
       </div>
@@ -20,10 +20,14 @@ import {
       `
          .notification-toast {
             display: flex;
+            align-items: center;
+            height: 65px;
          }
          .notification-toast > mat-icon {
-            font-size: 35px;
-            margin-right: 20px;
+            font-size: 45px;
+            margin-right: 30px;
+            padding: 10px 0;
+            height: 100%;
          }
       `,
    ],

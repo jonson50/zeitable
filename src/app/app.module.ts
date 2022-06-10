@@ -30,6 +30,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 
 
@@ -55,6 +56,7 @@ import { MatCardModule } from '@angular/material/card';
       MatDialogModule,
       MatSnackBarModule,
       MatCardModule,
+      MatSlideToggleModule,
    ],
    declarations: [
       AppComponent,

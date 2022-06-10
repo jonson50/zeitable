@@ -1,10 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, combineLatest, filter, first, map, tap } from 'rxjs';
+import { first } from 'rxjs';
 import { AuthService } from '@app/_services/auth.service';
 import { SubSink } from 'subsink';
 import { HttpErrorResponse } from '@angular/common/http';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
    selector: 'app-login',
@@ -19,21 +20,16 @@ export class LoginComponent implements OnInit, OnDestroy {
    redirectUrl = '';
 
    constructor(
+      @Inject(DOCUMENT) private document: Document, 
+      private renderer: Renderer2,
       private formBuilder: FormBuilder,
       private authService: AuthService,
       private router: Router,
       private route: ActivatedRoute
-   ) {
-      // this.subs.sink = this.route.paramMap.subscribe(
-      //    (params) => {
-      //       this.redirectUrl = params.get('redirectUrl') ?? ''
-      //    }
-      // );
-
-   }
+   ) {}
 
    ngOnInit(): void {
-      //this.authService.logout();
+      this.renderer.setAttribute(this.document.body, 'class', 'theme-light');
       this.buildLoginForm();
    }
 

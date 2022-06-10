@@ -26,8 +26,8 @@ mat-sidenav {
    border-color: darkgray;
    border-width: 1px;
    border-color: rgb(200, 200, 255);
-   background: #1e1e2d;
-   color: whitesmoke;
+   background: #1e1e2d !important;
+   color: whitesmoke !important;
    text-align: center;
 }
 
@@ -63,7 +63,7 @@ mat-sidenav-container {
 .w3-bar-block a.selected {
    color: whitesmoke;
    font-weight: 500;
-   background: #673ab7;;
+   background: #673ab7;
    border-radius: 0px;
    border-left: 5px solid whitesmoke;
 }
