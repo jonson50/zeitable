@@ -31,6 +31,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 
 
@@ -57,6 +59,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
       MatSnackBarModule,
       MatCardModule,
       MatSlideToggleModule,
+      MatExpansionModule,
+      MatDatepickerModule,
    ],
    declarations: [
       AppComponent,

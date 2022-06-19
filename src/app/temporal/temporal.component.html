@@ -1,10 +1,96 @@
 <mat-card class="w3-margin-top">
-   <mat-card-title>Temporal Component</mat-card-title>
-   <mat-card-actions>
-      <button mat-raised-button color="primary" (click)="prueba()">Set</button>
-      <button mat-raised-button color="primary" (click)="prueba2()">Get</button>
-   </mat-card-actions>
-   <mat-divider></mat-divider>
-   <mat-card-content class="content"> Main content here! </mat-card-content>
+  <mat-card-title>Temporal Component</mat-card-title>
+  <mat-card-actions>
+    <button mat-raised-button color="primary" (click)="prueba()">Set</button>
+    <button mat-raised-button color="primary" (click)="prueba2()">Get</button>
+  </mat-card-actions>
+  <mat-divider></mat-divider>
+  <mat-card-content class="content"> Main content here! </mat-card-content>
 </mat-card>
 <!-- <div class="content mat-elevation-z2">Main content here!</div> -->
+<mat-accordion class="dates-entries-list">
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        01.03.2022
+      </mat-panel-title>
+      <mat-panel-description>
+        <span>Day Description</span>
+        <p>Should: 8h - Is: <span class="w3-tag w3-teal w3-round">5h 30m</span></p>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <mat-card class="time-entry">
+      <mat-card-title-group>
+        <mat-card-title>07:00 - 17:00</mat-card-title>
+        <mat-card-subtitle>Pause: 0:45 </mat-card-subtitle>
+        <span class="sub-time">5h 30m</span>
+      </mat-card-title-group>
+      <mat-card-content>
+        <div class="homeoffice-valid">
+          <mat-icon>home</mat-icon><span>Home office</span>
+        </div>
+        <div>Name of the Project Name of the Project Name of the Project</div>
+        <div><b>Comments:</b> Comments of the entry</div>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-stroked-button>
+          <mat-icon>drive_file_rename_outline</mat-icon>
+        </button>
+        <button mat-stroked-button color="warn">
+          <mat-icon>delete_forever</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="time-entry">
+      <mat-card-title-group>
+        <mat-card-title>07:00 - 17:00</mat-card-title>
+        <mat-card-subtitle>Pause: 0:45 </mat-card-subtitle>
+        <span class="sub-time">5h 30m</span>
+      </mat-card-title-group>
+      <mat-card-content>
+        <div>Name of the Project Name of the Project Name of the Project</div>
+        <div><b>Comments:</b> Comments of the entry</div>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-stroked-button>
+          <mat-icon>drive_file_rename_outline</mat-icon>
+        </button>
+        <button mat-stroked-button color="warn">
+          <mat-icon>delete_forever</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        02.03.2022
+      </mat-panel-title>
+      <mat-panel-description>
+        <span>Type the country name</span>
+        <p><span class="w3-tag w3-teal w3-round">5h 30m</span></p>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Country</mat-label>
+      <input matInput>
+    </mat-form-field>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        03.03.2022
+      </mat-panel-title>
+      <mat-panel-description>
+        <span>Inform the date you wish to travel</span>
+        <p><span class="w3-tag w3-teal w3-round">5h 30m</span></p>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+  </mat-expansion-panel>
+</mat-accordion>

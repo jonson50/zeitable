@@ -1,5 +1,6 @@
 .op-header-content {
    background: rgba(0, 0, 0, 0);
+
    .toolbar-spacer {
       flex: 1 1 auto;
    }
@@ -8,7 +9,7 @@
 .example-button-row {
    display: table-cell;
    width: 490px;
- }
+}
 
 .content {
    height: 300px;
@@ -20,4 +21,54 @@
 
    font-size: 2rem;
    color: lightgray;
+}
+
+
+.dates-entries-list{
+   .mat-card-content {
+      margin-bottom: 0px;
+      font-size: medium;
+   }
+
+   .time-entry {
+      margin-bottom: 8px;
+   }
+
+   .mat-card-actions {
+      padding: 0px;
+   }
+
+   .mat-card-subtitle {
+      margin-bottom: 3px;
+   }
+
+   .homeoffice-valid {
+      mat-icon {
+         vertical-align: bottom;
+      }
+      font-size: medium;
+   }
+} 
+
+
+.dates-entries-list .mat-expansion-panel-header-description {
+   justify-content: space-between;
+   align-items: left;
+   width: 80%;
+}
+
+/* On screens that are 800px or less, header description is hide */
+@media screen and (max-width: 800px) {
+   .dates-entries-list .mat-expansion-panel-header-description {
+      > span {
+         display: none;
+      }
+      justify-content: end;
+   }
+}
+
+.sub-time {
+   font-weight: bold;
+   font-size: large;
+   color: rgb(55, 105, 200);
 }

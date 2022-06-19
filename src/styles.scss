@@ -4,7 +4,7 @@
 @include mat-core();
 
 $mat-theming-primary: mat-palette($mat-deep-purple);
-$mat-theming-accent: mat-palette($mat-pink, A200, A100, A400);
+$mat-theming-accent: mat-palette($mat-purple, A200, A100, A400);
 
 $mat-theming-warm: mat-palette($mat-red);
 
@@ -23,4 +23,12 @@ body {
 
 .theme-light {
    @include angular-material-theme($mat-theming-theme);
+}
+
+.theme-dark .dates-entries-list .time-entry {
+   background: rgb(83, 82, 82);
+}
+
+.theme-light .dates-entries-list .time-entry {
+   background: rgb(245, 245, 245);
 }
