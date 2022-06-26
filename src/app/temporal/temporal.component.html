@@ -1,13 +1,17 @@
-<mat-card class="w3-margin-top">
-  <mat-card-title>Temporal Component</mat-card-title>
-  <mat-card-actions>
-    <button mat-raised-button color="primary" (click)="prueba()">Set</button>
-    <button mat-raised-button color="primary" (click)="prueba2()">Get</button>
-  </mat-card-actions>
-  <mat-divider></mat-divider>
-  <mat-card-content class="content"> Main content here! </mat-card-content>
-</mat-card>
-<!-- <div class="content mat-elevation-z2">Main content here!</div> -->
+<div class="w3-margin-top w3-margin-bottom">
+  <div class="w3-right-align w3-margin-bottom">
+    <div>Accumulated: <span class="w3-tag w3-teal w3-round">15h 30m</span></div>
+  </div>
+  <div class="month-name-row">
+    <div>
+      <mat-icon>arrow_back_ios_new</mat-icon>
+    </div>
+    <div>November, 2022</div>
+    <div>
+      <mat-icon>arrow_forward_ios_new</mat-icon>
+    </div>
+  </div>
+</div>
 <mat-accordion class="dates-entries-list">
   <mat-expansion-panel>
     <mat-expansion-panel-header>
@@ -20,6 +24,8 @@
       </mat-panel-description>
     </mat-expansion-panel-header>
 
+    <button mat-raised-button color="primary" class="add-time-btn">+ Add record</button>
+
     <mat-card class="time-entry">
       <mat-card-title-group>
         <mat-card-title>07:00 - 17:00</mat-card-title>
@@ -27,11 +33,18 @@
         <span class="sub-time">5h 30m</span>
       </mat-card-title-group>
       <mat-card-content>
-        <div class="homeoffice-valid">
-          <mat-icon>home</mat-icon><span>Home office</span>
-        </div>
-        <div>Name of the Project Name of the Project Name of the Project</div>
-        <div><b>Comments:</b> Comments of the entry</div>
+        <span class="menu-button w3-bar-item">
+          <mat-icon>home</mat-icon>
+          <span>Home office</span>
+        </span>
+        <span class="menu-button w3-bar-item">
+          <mat-icon>factory</mat-icon>
+          <span>Name of the Project Name of the Project Name of the Project</span>
+        </span>
+        <span class="menu-button w3-bar-item">
+          <mat-icon>comment</mat-icon>
+          <span>Comments of the entry</span>
+        </span>
       </mat-card-content>
       <mat-card-actions align="end">
         <button mat-stroked-button>
@@ -50,8 +63,14 @@
         <span class="sub-time">5h 30m</span>
       </mat-card-title-group>
       <mat-card-content>
-        <div>Name of the Project Name of the Project Name of the Project</div>
-        <div><b>Comments:</b> Comments of the entry</div>
+        <span class="menu-button w3-bar-item">
+          <mat-icon>factory</mat-icon>
+          <span>Name of the Project Name of the Project Name of the Project</span>
+        </span>
+        <span class="menu-button w3-bar-item">
+          <mat-icon>comment</mat-icon>
+          <span>Comments of the entry</span>
+        </span>
       </mat-card-content>
       <mat-card-actions align="end">
         <button mat-stroked-button>
@@ -64,6 +83,7 @@
     </mat-card>
 
   </mat-expansion-panel>
+
   <mat-expansion-panel>
     <mat-expansion-panel-header>
       <mat-panel-title>
@@ -75,10 +95,7 @@
       </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Country</mat-label>
-      <input matInput>
-    </mat-form-field>
+    <button mat-raised-button color="primary" class="add-time-btn">+ Add record</button>
   </mat-expansion-panel>
 
   <mat-expansion-panel>
@@ -91,6 +108,7 @@
         <p><span class="w3-tag w3-teal w3-round">5h 30m</span></p>
       </mat-panel-description>
     </mat-expansion-panel-header>
-
+    
+    <button mat-raised-button color="primary" class="add-time-btn">+ Add record</button>
   </mat-expansion-panel>
 </mat-accordion>

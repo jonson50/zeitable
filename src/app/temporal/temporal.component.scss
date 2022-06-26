@@ -1,28 +1,8 @@
-.op-header-content {
-   background: rgba(0, 0, 0, 0);
-
-   .toolbar-spacer {
-      flex: 1 1 auto;
-   }
-}
-
-.example-button-row {
-   display: table-cell;
-   width: 490px;
-}
-
-.content {
-   height: 300px;
-   margin-bottom: 20px;
-
+.month-name-row {
    display: flex;
-   justify-content: center;
-   align-items: center;
-
-   font-size: 2rem;
-   color: lightgray;
+   justify-content: space-between;
+   font-size: xx-large;
 }
-
 
 .dates-entries-list{
    .mat-card-content {
@@ -34,6 +14,10 @@
       margin-bottom: 8px;
    }
 
+   .add-time-btn {
+      margin-bottom: 8px;
+   }
+
    .mat-card-actions {
       padding: 0px;
    }
@@ -42,11 +26,16 @@
       margin-bottom: 3px;
    }
 
-   .homeoffice-valid {
+   .menu-button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 5px;
       mat-icon {
-         vertical-align: bottom;
+         font-size: 20px;
+         color: rgb(135, 135, 135);
       }
-      font-size: medium;
    }
 } 
 
