@@ -12,10 +12,6 @@ $mat-theming-theme: mat-light-theme($mat-theming-primary, $mat-theming-accent, $
 $mat-theming-theme-dark: mat-dark-theme($mat-theming-primary, $mat-theming-accent, $mat-theming-warm);
 
 html, body { height: 100%; }
-body {
-   margin: 0;
-   font-family: Roboto, "Helvetica Neue", sans-serif;
-}
 
 .theme-dark {
    @include angular-material-theme($mat-theming-theme-dark);
