@@ -66,7 +66,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
       routingComponents,
    ],
    providers: [
-      AuthGuard,
+      //AuthGuard,
       {
          provide: HTTP_INTERCEPTORS,
          useClass: AuthHttpInterceptor,

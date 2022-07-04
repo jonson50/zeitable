@@ -7,10 +7,9 @@ import {
    RouterStateSnapshot
 } from '@angular/router';
 import { lastValueFrom, Observable, of, throwError } from 'rxjs';
-import { catchError, first, map, shareReplay, take, tap } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { AuthService } from '@app/core/_services/auth.service';
 import { Account, IRole } from '@app/core/_models/account';
-import { transformError } from './common';
 import { MessageService } from '@app/core/_components/message.service';
 import { ToastType } from '@app/core/_components/message.enum';
 
@@ -49,10 +48,12 @@ export class AuthGuard implements CanActivate, CanActivateChild {
          return this.checkRoleMatch(account, route);
       } else {
          if (token) {
-            return this.authService.validateSession().pipe(
+            this.authService.validateSession().subscribe();
+            return true;
+            /* return this.authService.validateSession().pipe(
                map((account: Account) => this.checkRoleMatch(account, route)),
                take(1)
-            );
+            ); */
          } else {
             this.messageService.showToast('You must login to continue', ToastType.danger, 5000)
             this.router.navigate(['/login']);
@@ -76,6 +77,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       let isValidRoles = false;
       let roleMatch = false;
       this.messageService.showToast(`Welcome back ${account.fullName}`, ToastType.success)
+
       if (route?.data?.['roles']) {
          console.log('tiene route.data.roles')
          roles.forEach(e => {
@@ -87,6 +89,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
          roleMatch = true;
       }
       const allowLogin = account.authenticated && roleMatch
+      
       if (!allowLogin) {
          // this.showAlert(authStatus.isAuthenticated, roleMatch)
          this.router.navigate(['/'], {

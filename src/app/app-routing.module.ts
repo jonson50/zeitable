@@ -5,6 +5,7 @@ import { LoginComponent } from './core/components/login/login.component';
 import { DashboardComponent } from './core/components/dashboard/dashboard.component';
 import { TemporalHomeComponent } from './core/temporal-home/temporal-home.component';
 import { LoginGuard, AuthGuard } from '@app/core/_helpers';
+import { AuthorizationGuard } from './core/_services/authorization.guard';
 
 const routes: Routes = [
    {
@@ -15,11 +16,12 @@ const routes: Routes = [
    {
       path: '',
       component: LayoutComponent,
-      canActivate: [AuthGuard],
+      canActivate: [AuthorizationGuard],
       children: [
          { path: 'dashboard', component: DashboardComponent },
          { path: 'timeentry', loadChildren: () => import('./time-entry/time-entry.module').then(m => m.TimeEntryModule) },
-         { path: '', component: TemporalHomeComponent, pathMatch: 'full' },
+         { path: 'temporal', component: TemporalHomeComponent, pathMatch: 'full' },
+         { path: '**', redirectTo: '/dashboard' },
       ]
    },
    { path: '**', redirectTo: 'login' },

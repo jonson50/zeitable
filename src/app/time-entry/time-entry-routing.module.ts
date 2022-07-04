@@ -7,7 +7,7 @@ const routes: Routes = [
    {
       path: '',
       component: EntryListComponent,
-      canActivate: [AuthGuard],
+      //canActivate: [AuthGuard],
       pathMatch: 'full'
    },
    { path: '**', redirectTo: 'timeentry' },
