@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs';
-import { AuthService } from '@app/_services/auth.service';
+import { AuthService } from '@app/core/_services/auth.service';
 import { SubSink } from 'subsink';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DOCUMENT } from '@angular/common';

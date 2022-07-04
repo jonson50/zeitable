@@ -13,7 +13,7 @@ import { BehaviorSubject,
 import { catchError, filter, tap  } from 'rxjs/operators'; // Operators
 
 import { transformError } from '../_helpers/common';
-import { Account } from '@app/_models/account';
+import { Account } from '@app/core/_models/account';
 import { CacheService } from './cache.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '@environments/environment';

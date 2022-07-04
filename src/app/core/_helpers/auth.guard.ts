@@ -8,11 +8,11 @@ import {
 } from '@angular/router';
 import { lastValueFrom, Observable, of, throwError } from 'rxjs';
 import { catchError, first, map, shareReplay, take, tap } from 'rxjs/operators';
-import { AuthService } from '@app/_services/auth.service';
-import { Account, IRole } from '@app/_models/account';
+import { AuthService } from '@app/core/_services/auth.service';
+import { Account, IRole } from '@app/core/_models/account';
 import { transformError } from './common';
-import { MessageService } from '@app/_components/message.service';
-import { ToastType } from '@app/_components/message.enum';
+import { MessageService } from '@app/core/_components/message.service';
+import { ToastType } from '@app/core/_components/message.enum';
 
 @Injectable({
    providedIn: 'root',

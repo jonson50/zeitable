@@ -7,7 +7,7 @@ import {
    HttpHeaders
 } from '@angular/common/http';
 import { finalize, Observable } from 'rxjs';
-import { AuthService } from '@app/_services';
+import { AuthService } from '@app/core/_services';
 import { environment } from '@environments/environment';
 import { NgxSpinnerService } from 'ngx-spinner';
 

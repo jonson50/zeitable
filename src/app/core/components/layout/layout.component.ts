@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, EventEmitter, HostBinding, Inject, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { AuthService } from '@app/_services/auth.service';
+import { AuthService } from '@app/core/_services/auth.service';
 import { Observable } from 'rxjs';
-import { Account } from '@app/_models/account';
+import { Account } from '@app/core/_models/account';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { DOCUMENT } from '@angular/common';
 

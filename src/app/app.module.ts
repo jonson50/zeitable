@@ -4,17 +4,16 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule, routingComponents } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { SimpleDialogComponent } from '@app/_components/simple-dialog.component';
-import { MainToastComponent } from '@app/_components/toast.component';
+import { SimpleDialogComponent } from '@app/core/_components/simple-dialog.component';
+import { MainToastComponent } from '@app/core/_components/toast.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // Services
-import { AuthJwtService } from './auth/auth-jwt.service';
 import {
    AuthHttpInterceptor,
    ErrorInterceptor,
-   AuthGuard } from '@app/_helpers';
-import { AuthService } from '@app/_services';
+   AuthGuard } from '@app/core/_helpers';
+import { AuthService } from '@app/core/_services';
 // Angular CDK
 import { LayoutModule } from '@angular/cdk/layout';
 import { NgxSpinnerModule } from 'ngx-spinner';

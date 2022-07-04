@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LayoutComponent } from './components/layout/layout.component';
-import { LoginComponent } from './components/login/login.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { TemporalHomeComponent } from './temporal-home/temporal-home.component';
-import { LoginGuard, AuthGuard } from '@app/_helpers';
+import { LayoutComponent } from './core/components/layout/layout.component';
+import { LoginComponent } from './core/components/login/login.component';
+import { DashboardComponent } from './core/components/dashboard/dashboard.component';
+import { TemporalHomeComponent } from './core/temporal-home/temporal-home.component';
+import { LoginGuard, AuthGuard } from '@app/core/_helpers';
 
 const routes: Routes = [
    {
