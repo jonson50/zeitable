@@ -1,7 +1,14 @@
 .month-name-row {
    display: flex;
    justify-content: space-between;
-   font-size: xx-large;
+   font-size: 25px;
+
+   ::ng-deep .mat-icon {
+      font-size: 40px;
+      width: 20px;
+      display: inline;
+      vertical-align: middle;
+    }
 }
 
 .dates-entries-list{
@@ -41,6 +48,7 @@
 
 
 .dates-entries-list .mat-expansion-panel-header-description {
+   display: flex;
    justify-content: space-between;
    align-items: left;
    width: 80%;
