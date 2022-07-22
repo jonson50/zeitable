@@ -10,11 +10,15 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { RecordCardComponent } from './components/record-card/record-card.component';
+import { TimeRecordCardComponent } from './time-record-card/time-record-card.component';
+
+
 
 @NgModule({
   declarations: [
     EntryListComponent,
     RecordCardComponent,
+    TimeRecordCardComponent
   ],
   imports: [
     CommonModule,
