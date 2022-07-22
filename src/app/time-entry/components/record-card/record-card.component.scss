@@ -1,0 +1,38 @@
+.time-entry {
+   margin-bottom: 10px;
+
+   .mat-card-content {
+      margin-bottom: 0px;
+      font-size: medium;
+   }
+   
+   .mat-card-actions {
+      padding: 0px;
+   }
+   
+   .sub-time {
+      font-weight: bold;
+      font-size: large;
+      color: rgb(55, 105, 200);
+   }
+
+   .mat-card-actions {
+      padding: 0px;
+   }
+
+   .mat-card-subtitle {
+      margin-bottom: 3px;
+   }
+   
+   .menu-button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 5px;
+      mat-icon {
+         font-size: 20px;
+         color: rgb(135, 135, 135);
+      }
+   }
+}

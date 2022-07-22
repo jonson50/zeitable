@@ -11,41 +11,9 @@
     }
 }
 
-.dates-entries-list{
-   .mat-card-content {
-      margin-bottom: 0px;
-      font-size: medium;
-   }
-
-   .time-entry {
-      margin-bottom: 8px;
-   }
-
-   .add-time-btn {
-      margin-bottom: 8px;
-   }
-
-   .mat-card-actions {
-      padding: 0px;
-   }
-
-   .mat-card-subtitle {
-      margin-bottom: 3px;
-   }
-
-   .menu-button {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 5px;
-      mat-icon {
-         font-size: 20px;
-         color: rgb(135, 135, 135);
-      }
-   }
+.add-time-btn {
+   margin-bottom: 8px;
 }
-
 
 .dates-entries-list .mat-expansion-panel-header-description {
    display: flex;
@@ -62,10 +30,10 @@
       }
       justify-content: end;
    }
+
+   .mat-expansion-panel-header-title {
+      width: 80px;
+   }
 }
 
-.sub-time {
-   font-weight: bold;
-   font-size: large;
-   color: rgb(55, 105, 200);
-}
+

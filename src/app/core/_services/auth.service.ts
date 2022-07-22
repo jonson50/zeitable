@@ -115,7 +115,7 @@ export abstract class AuthService extends CacheService {
       return logoutResponse$;
    }
 
-   // Methods for handlind token 
+   /* Methods for handlind token  */
    public getToken(): string {
       return this.getItem('token') as string;
    }
