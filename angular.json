@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "opita": {
+    "zeitable": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/opita",
+            "outputPath": "dist/zeitable",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -69,10 +69,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "opita:build:production"
+              "browserTarget": "zeitable:build:production"
             },
             "development": {
-              "browserTarget": "opita:build:development"
+              "browserTarget": "zeitable:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -80,7 +80,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "opita:build"
+            "browserTarget": "zeitable:build"
           }
         },
         "test": {
@@ -109,5 +109,5 @@
       "style": "scss"
     }
   },
-  "defaultProject": "opita"
+  "defaultProject": "zeitable"
 }

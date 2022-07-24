@@ -47,9 +47,9 @@ export class LoginComponent implements OnInit, OnDestroy {
       });
    }
 
-   async login(submitedForm: FormGroup) {
+   login(submitedForm: FormGroup) {
       this.authService.rememberMe = this.rememberMe;
-      this.authService
+      /* this.authService
          .login(submitedForm.value.email, submitedForm.value.password)
          .pipe(
             first(),
@@ -63,7 +63,10 @@ export class LoginComponent implements OnInit, OnDestroy {
             error: (error:HttpErrorResponse) => {
                console.error(error.error);
             }
-         })
+         }) */
+      this.authService.login(submitedForm.value.email, submitedForm.value.password)
+      .then(r=>console.log(r.attributes))
+      .catch( e => console.log(e))
    }
 
    // Unsubscribe when the component dies

@@ -1,17 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import * as Parse from 'parse';
-import {
-   BehaviorSubject,
-   Observable,
-   of,
-   zip,
-   throwError,
+import { BehaviorSubject, 
+   Observable, 
+   of, 
+   zip, 
+   throwError, 
    mergeMap,
-   map,
+   map, 
    pipe
 } from 'rxjs'; // Creators
-import { catchError, filter, tap } from 'rxjs/operators'; // Operators
+import { catchError, filter, tap  } from 'rxjs/operators'; // Operators
 
 import { transformError } from '../_helpers/common';
 import { Account } from '@app/core/_models/account';
@@ -21,31 +19,31 @@ import { environment } from '@environments/environment';
 
 
 @Injectable({ providedIn: 'root' })
-export abstract class AuthService extends CacheService {
+export abstract class AuthService2 extends CacheService {
    // Class Variables
    private getAndUpdateAccountIfAuthenticated = pipe(
-      mergeMap((user: any) => {
+      mergeMap( (user:any) => {
          const urlPerson = `${environment.apiURL}/classes/Person`;
-         const urlRoles = `${environment.apiURL}/roles`;
+         const urlRoles  = `${environment.apiURL}/roles`;
          // let headers = new HttpHeaders();
          // headers = headers.set('X-Parse-Session-Token', user.sessionToken)
          let paramsPerson = new HttpParams().set('where', `{"user":{"__type":"Pointer","className":"_User","objectId":"${user.objectId}"}}`);
          let paramsRoles = new HttpParams().set('where', `{"users":{"$inQuery":{"where":{"objectId":"${user.objectId}"},"className":"_User"}}}`);
          return zip(
-            of(user),
-            this.http.get(urlPerson, { params: paramsPerson }),
-            this.http.get(urlRoles, { params: paramsRoles })
-         )
+                  of(user), 
+                  this.http.get(urlPerson, { params: paramsPerson}), 
+                  this.http.get(urlRoles, { params: paramsRoles})
+               )
       }),
       map(([user, person, roles]: any[]) => {
-         const rolesArray = roles.results.map((role: any) => role.name);
+         const rolesArray = roles.results.map((role:any) => role.name);
          return ({
-            user: user,
-            person: person.results[0],
-            roles: rolesArray
-         });
+                  user: user,
+                  person: person.results[0],
+                  roles: rolesArray
+               });
       }),
-      map(loginResponse => {
+      map( loginResponse => {
          let account = new Account(loginResponse);
          this.accountSubject.next(account);
          console.log(account);
@@ -63,9 +61,6 @@ export abstract class AuthService extends CacheService {
       private router: Router
    ) {
       super();
-      Parse.initialize(environment.APP_ID, environment.JS_KEY);
-      (Parse as any).serverURL = environment.apiURL;
-      
       this.accountSubject = new BehaviorSubject<Account>(new Account());
       this.account = this.accountSubject.asObservable();
    }
@@ -75,33 +70,32 @@ export abstract class AuthService extends CacheService {
    }
 
    // Class methods
-   async login(email: string, password: string) { //Observable<Account> {
+   login(email: string, password: string): Observable<Account> {
       this.clearToken();
 
       const body = {
          username: email,
          password: password,
       };
-      /* const baseUrl = `${environment.apiURL}/login`;
-
+      const baseUrl   = `${environment.apiURL}/login`;
+      
       return this.http.post<Account>(baseUrl, body).pipe(
          tap({
             next: user => {
-               // if authenticated then save token
-               console.log('rememberme?: ', this.rememberMe)
-               this.setToken(user.sessionToken);
+              // if authenticated then save token
+              console.log('rememberme?: ', this.rememberMe)
+              this.setToken(user.sessionToken);
             },
             error: error => {
-               console.log('on error', error);
-               return error;
+              console.log('on error', error);
+              return error;
             }
-         }),
+          }),
          this.getAndUpdateAccountIfAuthenticated
-      ); */
-      return await Parse.User.logIn(email, password)
+      );
    }
 
-   logout(): Observable<void> {
+   logout() {
       const baseUrl = `${environment.apiURL}/logout`;
       const body = {};
       const logoutResponse$ = this.http.post<void>(baseUrl, body)
@@ -134,7 +128,7 @@ export abstract class AuthService extends CacheService {
    }
 
    validateSession() {
-      const baseUrl = `${environment.apiURL}/users/me`;
+      const baseUrl   = `${environment.apiURL}/users/me`;  
       return this.http.get<Account>(baseUrl).pipe(
          this.getAndUpdateAccountIfAuthenticated
       );
