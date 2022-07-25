@@ -12,9 +12,9 @@ export class TemporalHomeComponent implements OnInit {
    ngOnInit(): void {}
 
    prueba(): void {
-      this.service.personas().subscribe(r => {
+      /* this.service.personas().subscribe(r => {
          console.log(r)
-      });
+      }); */
    }
    prueba2() {
       //console.log(this.service.getToken());

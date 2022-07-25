@@ -2,146 +2,121 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import * as Parse from 'parse';
 import {
-   BehaviorSubject,
-   Observable,
-   of,
-   zip,
-   throwError,
-   mergeMap,
-   map,
-   pipe
+   BehaviorSubject, Observable
 } from 'rxjs'; // Creators
-import { catchError, filter, tap } from 'rxjs/operators'; // Operators
-
-import { transformError } from '../_helpers/common';
-import { Account } from '@app/core/_models/account';
-import { CacheService } from './cache.service';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { Account, IBaseAccount } from '@app/core/_models/account';
 import { environment } from '@environments/environment';
+import { CacheService } from './cache.service';
 
 
 @Injectable({ providedIn: 'root' })
 export abstract class AuthService extends CacheService {
-   // Class Variables
-   private getAndUpdateAccountIfAuthenticated = pipe(
-      mergeMap((user: any) => {
-         const urlPerson = `${environment.apiURL}/classes/Person`;
-         const urlRoles = `${environment.apiURL}/roles`;
-         // let headers = new HttpHeaders();
-         // headers = headers.set('X-Parse-Session-Token', user.sessionToken)
-         let paramsPerson = new HttpParams().set('where', `{"user":{"__type":"Pointer","className":"_User","objectId":"${user.objectId}"}}`);
-         let paramsRoles = new HttpParams().set('where', `{"users":{"$inQuery":{"where":{"objectId":"${user.objectId}"},"className":"_User"}}}`);
-         return zip(
-            of(user),
-            this.http.get(urlPerson, { params: paramsPerson }),
-            this.http.get(urlRoles, { params: paramsRoles })
-         )
-      }),
-      map(([user, person, roles]: any[]) => {
-         const rolesArray = roles.results.map((role: any) => role.name);
-         return ({
-            user: user,
-            person: person.results[0],
-            roles: rolesArray
-         });
-      }),
-      map(loginResponse => {
-         let account = new Account(loginResponse);
-         this.accountSubject.next(account);
-         console.log(account);
-         return account;
-      })
-      // catchError(transformError)
-   );
-
+   // Variables
    readonly accountSubject: BehaviorSubject<Account>;
    readonly account: Observable<Account>
-   public rememberMe: boolean = false;
+   rememberMe: boolean = false;
 
    constructor(
-      private http: HttpClient,
       private router: Router
    ) {
       super();
-      Parse.initialize(environment.APP_ID, environment.JS_KEY);
-      (Parse as any).serverURL = environment.apiURL;
-      
       this.accountSubject = new BehaviorSubject<Account>(new Account());
       this.account = this.accountSubject.asObservable();
-   }
 
-   public get accountValue(): Account {
-      return this.accountSubject.value;
+      Parse.initialize(environment.APP_ID, environment.JS_KEY);
+      (Parse as any).serverURL = environment.apiURL;
    }
 
    // Class methods
-   async login(email: string, password: string) { //Observable<Account> {
+   /**
+    * Method used for making a Login to the app
+    * @param email parameter used as username while logging in
+    * @param password parameter that contains the password for logging in
+    * @returns return a Promise ensuring the current Account with all data required 
+    */
+   async login(email: string, password: string): Promise<Account> {
       this.clearToken();
+      const user = await Parse.User.logIn(email, password);
+      const account = await this.fillingAccount(user);
 
-      const body = {
-         username: email,
-         password: password,
-      };
-      /* const baseUrl = `${environment.apiURL}/login`;
+      return account;
+   }
 
-      return this.http.post<Account>(baseUrl, body).pipe(
-         tap({
-            next: user => {
-               // if authenticated then save token
-               console.log('rememberme?: ', this.rememberMe)
-               this.setToken(user.sessionToken);
+   logout(): void {
+      Parse.User.logOut()
+         .then(
+            () => {
+               this.accountSubject.next(new Account());
             },
-            error: error => {
-               console.log('on error', error);
-               return error;
+            error => console.error(error)
+         )
+         .finally(
+            () => {
+               this.clearToken();
+               this.router.navigate(['/login']);
             }
-         }),
-         this.getAndUpdateAccountIfAuthenticated
-      ); */
-      return await Parse.User.logIn(email, password)
+         )
    }
 
-   logout(): Observable<void> {
-      const baseUrl = `${environment.apiURL}/logout`;
-      const body = {};
-      const logoutResponse$ = this.http.post<void>(baseUrl, body)
-      logoutResponse$.subscribe({
-         next: (res) => {
-            this.accountSubject.next(new Account());
-            this.router.navigate(['/login'])
-         },
-         error: (err) => {
-            console.error(err)
-            return throwError(() => new Error(err));
-         },
-         complete: () => this.clearToken()
-      })
-
-      return logoutResponse$;
-   }
-
-   /* Methods for handlind token  */
-   public getToken(): string {
+   /* GET and SET Methods for the service  */
+   get token(): string {
       return this.getItem('token') as string;
    }
 
-   protected setToken(token: string) {
+   protected set token(token: string) {
       this.setItem('token', token, this.rememberMe);
    }
 
-   public clearToken() {
+   get accountValue(): Account {
+      return this.accountSubject.value;
+   }
+   /**
+    * This method clear the session token inside the Session Storage
+    */
+   clearToken() {
       this.removeItem('token');
    }
+   /**
+    * @param {string} token session to be validated
+    * @return {Promise} true or false according to result
+    * */
+   async isSessionValid(token: string): Promise<Account> {
+      const user = await Parse.User.become(token);
+      const account = await this.fillingAccount(user);
 
-   validateSession() {
-      const baseUrl = `${environment.apiURL}/users/me`;
-      return this.http.get<Account>(baseUrl).pipe(
-         this.getAndUpdateAccountIfAuthenticated
-      );
+      return account;
    }
+   /**
+    * @param {Parse.User} user 
+    * @returns an Accoun Promise with all user data.
+    */
+   async fillingAccount(user: Parse.User): Promise<Account> {
+      this.removeItem(`Parse/${environment.APP_ID}/currentUser`);
+      this.removeItem(`Parse/${environment.APP_ID}/installationId`);
+      // getting person for the authenticated user.
+      const Person = Parse.Object.extend("Person");
+      const person = await new Parse.Query(Person).equalTo("user", user).first();
+      if (person === undefined) return Promise.reject(new Error('There is not Person associated'));
+      // Getting roles for authenticated user.
+      const roles = await new Parse.Query(Parse.Role).equalTo('users', user).find()
+      // getting the current settings for the user
+      const query = new Parse.Query("Setting");
+      query.equalTo("user", user);
+      query.equalTo("active", true);
+      query.descending("updatedAt");
+      const settings = await query.first();
+      // setting session token for app
+      this.token = user.attributes['sessionToken'];
+      // creating new Account for app
+      const baseAccount = {
+         user: user,
+         person: person,
+         roles: roles,
+         settings: settings
+      } as IBaseAccount
+      let account = new Account(baseAccount);
+      this.accountSubject.next(account);
 
-   personas() {
-      const urlPerson = `${environment.apiURL}/classes/Person`;
-      return this.http.get(urlPerson)
+      return account;
    }
 }

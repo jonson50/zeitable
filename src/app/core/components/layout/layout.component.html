@@ -22,7 +22,7 @@
 <mat-sidenav-container>
    <mat-sidenav #sidenav mode="side">
       <img class="avatar mat-elevation-z8" src="../../../assets/images/unknown.png" alt="profile-image" />
-      <h4 class="name">{{ (currentAccount | async)?.person?.name }}</h4>
+      <h4 class="name">{{ (currentAccount | async)?.person?.attributes?.name }}</h4>
 
       <mat-divider></mat-divider>
       <div class="w3-bar-block w3-margin-top">

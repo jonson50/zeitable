@@ -50,7 +50,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
       });
    }
 
-   async logout() {
+   logout() {
       this.authService.logout();
    }
 

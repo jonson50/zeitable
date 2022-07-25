@@ -4,7 +4,7 @@ import { LayoutComponent } from './core/components/layout/layout.component';
 import { LoginComponent } from './core/components/login/login.component';
 import { DashboardComponent } from './core/components/dashboard/dashboard.component';
 import { TemporalHomeComponent } from './core/temporal-home/temporal-home.component';
-import { LoginGuard, AuthGuard } from '@app/core/_helpers';
+import { LoginGuard } from '@app/core/_helpers';
 import { AuthorizationGuard } from './core/_services/authorization.guard';
 
 const routes: Routes = [

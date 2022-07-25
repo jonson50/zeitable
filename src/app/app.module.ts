@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
@@ -9,11 +9,6 @@ import { MainToastComponent } from '@app/core/_components/toast.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // Services
-import {
-   AuthHttpInterceptor,
-   ErrorInterceptor,
-   AuthGuard } from '@app/core/_helpers';
-import { AuthService } from '@app/core/_services';
 // Angular CDK
 import { LayoutModule } from '@angular/cdk/layout';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -65,19 +60,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
       MainToastComponent,
       routingComponents,
    ],
-   providers: [
-      //AuthGuard,
-      {
-         provide: HTTP_INTERCEPTORS,
-         useClass: AuthHttpInterceptor,
-         multi: true,
-      },
-      {
-         provide: HTTP_INTERCEPTORS,
-         useClass: ErrorInterceptor,
-         multi: true,
-      },
-   ],
+   providers: [],
    bootstrap: [AppComponent],
    entryComponents: [SimpleDialogComponent],
 })

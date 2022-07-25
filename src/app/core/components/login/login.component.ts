@@ -20,13 +20,13 @@ export class LoginComponent implements OnInit, OnDestroy {
    redirectUrl = '';
 
    constructor(
-      @Inject(DOCUMENT) private document: Document, 
+      @Inject(DOCUMENT) private document: Document,
       private renderer: Renderer2,
       private formBuilder: FormBuilder,
       private authService: AuthService,
       private router: Router,
       private route: ActivatedRoute
-   ) {}
+   ) { }
 
    ngOnInit(): void {
       this.renderer.setAttribute(this.document.body, 'class', 'theme-light');
@@ -65,8 +65,11 @@ export class LoginComponent implements OnInit, OnDestroy {
             }
          }) */
       this.authService.login(submitedForm.value.email, submitedForm.value.password)
-      .then(r=>console.log(r.attributes))
-      .catch( e => console.log(e))
+         .then(() => {
+            const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+            this.router.navigateByUrl(returnUrl);
+         })
+         .catch(e => console.error(e))
    }
 
    // Unsubscribe when the component dies
