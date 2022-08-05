@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Account } from '@app/core/_models/account';
 import { IProject } from '@app/core/_models/project';
-import { DayRecord, IWorkinDaysHours, TimeEntry } from '@app/core/_models/time-entry';
+import { DayRecord, ITimeEntry, IWorkinDaysHours, TimeEntry } from '@app/core/_models/time-entry';
 import { AuthService } from '@app/core/_services';
 import { RecordsService } from '../services/records.service';
 import { RecordEntryDialogComponent } from '../components/record-entry-dialog/record-entry-dialog.component';

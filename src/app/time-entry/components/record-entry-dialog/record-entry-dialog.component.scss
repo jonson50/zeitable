@@ -1,0 +1,21 @@
+.time-fields {
+   width: 250px;
+}
+
+.record-fields {
+   width: 100%;
+}
+
+.endtimeclass {
+   padding-left: 8px;
+}
+
+/* On screens that are 800px or less, header description is hide */
+@media screen and (max-width: 800px) {
+   .endtimeclass {
+      padding-left: 0;
+   }
+   .time-fields {
+      width: 100%;
+   }
+}

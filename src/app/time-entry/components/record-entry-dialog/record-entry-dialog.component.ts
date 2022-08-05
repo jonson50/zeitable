@@ -8,6 +8,11 @@ import { TimeEntry } from '@app/core/_models/time-entry';
   styleUrls: ['./record-entry-dialog.component.scss']
 })
 export class RecordEntryDialogComponent implements OnInit {
+  startTime!:string;
+  endTime!:string;
+  pauseTime!:string;
+  homeOffice:boolean = false;
+  format = 24;
 
   constructor(
     public dialogRef: MatDialogRef<RecordEntryDialogComponent>,
