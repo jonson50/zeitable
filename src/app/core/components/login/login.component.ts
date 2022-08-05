@@ -1,5 +1,5 @@
 import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs';
 import { AuthService } from '@app/core/_services/auth.service';
@@ -15,14 +15,14 @@ import { DOCUMENT } from '@angular/common';
 export class LoginComponent implements OnInit, OnDestroy {
    private subs = new SubSink();
    rememberMe: boolean = false;
-   loginForm!: FormGroup;
+   loginForm!: UntypedFormGroup;
    loginError = '';
    redirectUrl = '';
 
    constructor(
       @Inject(DOCUMENT) private document: Document,
       private renderer: Renderer2,
-      private formBuilder: FormBuilder,
+      private formBuilder: UntypedFormBuilder,
       private authService: AuthService,
       private router: Router,
       private route: ActivatedRoute
@@ -47,7 +47,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       });
    }
 
-   login(submitedForm: FormGroup) {
+   login(submitedForm: UntypedFormGroup) {
       this.authService.rememberMe = this.rememberMe;
       /* this.authService
          .login(submitedForm.value.email, submitedForm.value.password)
