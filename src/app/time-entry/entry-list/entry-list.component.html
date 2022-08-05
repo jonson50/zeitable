@@ -6,7 +6,7 @@
     <div class="w3-button month-arrow" (click)="selectAnotherMonth(-1)">
       <mat-icon>navigate_before</mat-icon>
     </div>
-    <div>{{ currentDate | date:'MMMM, y'}}</div>
+    <div>{{ selectedDate | date:'MMMM, y'}}</div>
     <div class="w3-button month-arrow" (click)="selectAnotherMonth(1)">
       <mat-icon>navigate_next</mat-icon>
     </div>
@@ -15,18 +15,21 @@
 &nbsp;
 
 <mat-accordion class="dates-entries-list">
-  <mat-expansion-panel *ngFor="let day of daysInMonth">
+  <mat-expansion-panel *ngFor="let record of recordDays; let i = index" [disabled]="!record.active">
     <mat-expansion-panel-header>
       <mat-panel-title>
-        {{ day | date:'d - EEE' }}
+        {{ record.date | date:'d - EEE' }}
       </mat-panel-title>
       <mat-panel-description>
-        <span>Inform the date you wish to travel</span>
-        <p><span class="w3-tag w3-teal w3-round">5h 30m</span></p>
+        <span>{{ record.description }}</span>
+        <p>should: {{record.should}} - is: &nbsp;<span class="w3-tag w3-teal w3-round">{{record.is}}</span></p>
       </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <button mat-raised-button color="primary" class="add-time-btn">+ Add record</button>
-    <app-record-card></app-record-card>
+    <button mat-raised-button color="primary" class="add-time-btn"
+      [disabled]="(!record.opened || record.records.length > 2)" (click)="addRecord(i)">
+      + Add record
+    </button>
+    <app-record-card *ngFor="let time of record.records"></app-record-card>
   </mat-expansion-panel>
 </mat-accordion>

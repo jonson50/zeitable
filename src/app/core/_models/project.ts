@@ -1,6 +1,7 @@
 export interface IProject {
-   objectId: string;
-   parentId: number;
+   id: string;
+   projectParent: IProject | null;
    code: string;
    name: string;
+   active: boolean;
 }

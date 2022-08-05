@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import * as Parse from 'parse';
-import {
-   BehaviorSubject, Observable
-} from 'rxjs'; // Creators
+import { BehaviorSubject, Observable } from 'rxjs'; // Creators
 import { Account, IBaseAccount } from '@app/core/_models/account';
 import { environment } from '@environments/environment';
 import { CacheService } from './cache.service';
@@ -12,8 +10,8 @@ import { CacheService } from './cache.service';
 @Injectable({ providedIn: 'root' })
 export abstract class AuthService extends CacheService {
    // Variables
-   readonly accountSubject: BehaviorSubject<Account>;
-   readonly account: Observable<Account>
+   private accountSubject: BehaviorSubject<Account>;
+   readonly account$: Observable<Account>
    rememberMe: boolean = false;
 
    constructor(
@@ -21,7 +19,7 @@ export abstract class AuthService extends CacheService {
    ) {
       super();
       this.accountSubject = new BehaviorSubject<Account>(new Account());
-      this.account = this.accountSubject.asObservable();
+      this.account$ = this.accountSubject.asObservable();
 
       Parse.initialize(environment.APP_ID, environment.JS_KEY);
       (Parse as any).serverURL = environment.apiURL;

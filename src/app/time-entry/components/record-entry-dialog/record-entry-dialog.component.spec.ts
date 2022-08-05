@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TimeRecordCardComponent } from './time-record-card.component';
+import { RecordEntryDialogComponent } from './record-entry-dialog.component';
 
-describe('TimeRecordCardComponent', () => {
-  let component: TimeRecordCardComponent;
-  let fixture: ComponentFixture<TimeRecordCardComponent>;
+describe('RecordEntryDialogComponent', () => {
+  let component: RecordEntryDialogComponent;
+  let fixture: ComponentFixture<RecordEntryDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TimeRecordCardComponent ]
+      declarations: [ RecordEntryDialogComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TimeRecordCardComponent);
+    fixture = TestBed.createComponent(RecordEntryDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

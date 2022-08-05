@@ -32,7 +32,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
 
    ngOnInit(): void {
       this.renderer.setAttribute(this.document.body, 'class', 'theme-light');
-      this.currentAccount = this.authService.account;
+      this.currentAccount = this.authService.account$;
    }
 
    ngAfterViewInit() {
