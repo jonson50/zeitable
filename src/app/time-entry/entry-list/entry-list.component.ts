@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Account } from '@app/core/_models/account';
-import { IProject } from '@app/core/_models/project';
-import { DayRecord, ITimeEntry, IWorkinDaysHours, TimeEntry } from '@app/core/_models/time-entry';
+import { Account, Settings } from '@app/core/_models/account';
+import { IProject, Project } from '@app/core/_models/project';
+import { DayRecord, IWorkinDaysHours, TimeEntry } from '@app/core/_models/time-entry';
 import { AuthService } from '@app/core/_services';
 import { RecordsService } from '../services/records.service';
 import { RecordEntryDialogComponent } from '../components/record-entry-dialog/record-entry-dialog.component';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-entry-list',
@@ -17,29 +18,36 @@ export class EntryListComponent implements OnInit {
   selectedDate!: Date;
   account!: Account;
   recordDays: DayRecord[] = [];
+  assignedProjects: Project[] = [];
 
   constructor(
     private authService: AuthService,
     private recordsService: RecordsService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private spinnerService: NgxSpinnerService
   ) { }
 
   ngOnInit(): void {
     this.selectedDate = new Date();
     this.authService.account$.subscribe(
-      account => this.account = account
+      account => { 
+        this.account = account;
+        const parseProjects:IProject[] = account.projects;
+        parseProjects.forEach((p) =>{
+          this.assignedProjects.push(new Project(p));
+        });
+      }
     );
-
+    this.spinnerService.show();
     this.recordsService.timeEntries.subscribe({
       next: resp => {
         console.log(resp)
         //Using the TimeEntry records to fill up the calendar table.
-
         this.recordDays = this.getDaysInMonth(this.selectedDate);
       },
-      error: error => console.dir(error),
+      error: error => console.error(error),
       complete: () => {
-
+        this.spinnerService.hide();
       }
     });
   }
@@ -61,15 +69,6 @@ export class EntryListComponent implements OnInit {
       //handling data when is sunday
       if (date.getDay() == 0 && workingDaysHours[date.getDay()] == 0) {
         // if it is Sunday and it is not allow to work on Sundays
-        /* 
-        description: string | null;
-        should: number | null;
-        is: number | null;
-        active: boolean;
-        opened: boolean;
-        records: ITimeEntry[];
-        isHolliday: boolean; 
-        */
         dayRecord.description = "Sunday";
         dayRecord.should = null;
         dayRecord.is = null;
@@ -186,9 +185,16 @@ export class EntryListComponent implements OnInit {
   }
 
   addRecord(index: number): void {
+    let timeEntry = new TimeEntry();
+    timeEntry.date = this.recordDays[index].date;
     const recordDialogRef = this.dialog.open(RecordEntryDialogComponent, {
-      data: new TimeEntry()
+      data: { 
+        record: timeEntry, 
+        projects: this.assignedProjects,
+        settings: new Settings(this.account.settings)
+      }
     });
+    console.log(this.account)
     /* const test = {
       id: "",
       startTime: new Date(),

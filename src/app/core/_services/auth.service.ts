@@ -103,14 +103,17 @@ export abstract class AuthService extends CacheService {
       query.equalTo("active", true);
       query.descending("updatedAt");
       const settings = await query.first();
+      // getting the current projects for the user
+      const projects = await new Parse.Query("Project").equalTo('users', user).ascending("code").find()
       // setting session token for app
       this.token = user.attributes['sessionToken'];
       // creating new Account for app
-      const baseAccount = {
+      const baseAccount:IBaseAccount = {
          user: user,
          person: person,
          roles: roles,
-         settings: settings
+         settings: settings,
+         projects: projects,
       } as IBaseAccount
       let account = new Account(baseAccount);
       this.accountSubject.next(account);

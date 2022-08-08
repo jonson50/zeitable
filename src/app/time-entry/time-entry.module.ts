@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';  //DELETE AFTER FORM MODIFICATION
+import { ReactiveFormsModule } from '@angular/forms';
 // Routing
 import { TimeEntryRoutingModule } from './time-entry-routing.module';
 // Components for Module Time Entry
@@ -39,7 +40,8 @@ import { MatSelectModule } from '@angular/material/select';
     MatFormFieldModule,
     MatInputModule,
     MatCheckboxModule,
-    MatSelectModule
+    MatSelectModule,
+    ReactiveFormsModule
   ]
 })
 export class TimeEntryModule { }

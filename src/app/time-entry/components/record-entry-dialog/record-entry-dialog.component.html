@@ -1,40 +1,48 @@
-<h2 mat-dialog-title>Time Record </h2>
-<mat-dialog-content>
-   <form class="demo-form">
+<h2 mat-dialog-title>Time Record for {{ record.date | date:'MMM d, y'}}</h2>
+<form class="demo-form" [formGroup]="recordForm" (ngSubmit)="onSubmit()" novalidate>
+   <mat-dialog-content>
       <div class="w3-row">
          <div class="w3-col m4">
             <mat-form-field appearance="fill" class="time-fields">
-               <mat-label>Start Time</mat-label>
-               <input matInput name="startTime" 
-                  [(ngModel)]="startTime" 
-                  [ngxMatTimepicker]="pickerA"
-                  [format]="format"
-                  placeholder="Start" readonly />
-               <mat-icon matSuffix (click)="pickerA.open()">
-                  watch_later
-               </mat-icon>
+               <mat-label (click)="pickerA.open()">Start Time</mat-label>
+               <input matInput name="startTime" formControlName="startTime" [ngxMatTimepicker]="pickerA"
+                  [format]="format" placeholder="Start" readonly />
+               <button matSuffix (click)="pickerA.open()" mat-icon-button aria-label="Clear" type="button">
+                  <mat-icon>
+                     watch_later
+                  </mat-icon>
+               </button>
+               <mat-error *ngIf="recordForm.get('startTime')?.hasError('invalidStartTime')">
+                  Should be earlier than End Time
+               </mat-error>
             </mat-form-field>
             <ngx-mat-timepicker #pickerA [minutesGap]="5"></ngx-mat-timepicker>
          </div>
 
          <div class="w3-col m4">
             <mat-form-field appearance="fill" class="time-fields endtimeclass">
-               <mat-label>End Time</mat-label>
-               <input matInput name="endTim" [(ngModel)]="endTime" [ngxMatTimepicker]="pickerB" [format]="format"
-                  placeholder="End" readonly />
-               <mat-icon matSuffix (click)="pickerB.open()">
-                  watch_later
-               </mat-icon>
+               <mat-label (click)="pickerB.open()">End Time</mat-label>
+               <input matInput name="endTim" formControlName="endTime" [ngxMatTimepicker]="pickerB" [format]="format"
+                  placeholder="End" readonly/>
+               <button matSuffix (click)="pickerB.open()" mat-icon-button aria-label="Clear" type="button">
+                  <mat-icon>
+                     watch_later
+                  </mat-icon>
+               </button>
+               <mat-error *ngIf="recordForm.get('startTime')?.hasError('invalidStartTime')">
+                  At least 1 Hr later than Start Time
+               </mat-error>
             </mat-form-field>
             <ngx-mat-timepicker #pickerB [minutesGap]="5"></ngx-mat-timepicker>
          </div>
 
          <div class="w3-col m4">
             <mat-form-field appearance="fill" class="time-fields endtimeclass">
-               <mat-label>Pause</mat-label>
-               <input matInput name="pauseTime" [(ngModel)]="pauseTime" [ngxMatTimepicker]="pickerC" [format]="format"
-                  placeholder="Pause" readonly min="00:00 am" max="02:00 am"/>
-               <button *ngIf="pauseTime" matSuffix mat-icon-button aria-label="Clear" (click)="pauseTime=''">
+               <mat-label (click)="pickerC.open()">Pause</mat-label>
+               <input matInput name="pauseTime" formControlName="pause" [ngxMatTimepicker]="pickerC" [format]="format"
+                  placeholder="Pause" readonly [min]="pauseRange[0]" [max]="pauseRange[1]"/>
+               <button *ngIf="recordForm.value.pause !== '' && recordForm.controls['pause'].enabled" matSuffix mat-icon-button aria-label="Clear" type="button"
+                  (click)="clearPauseField()">
                   <mat-icon>close</mat-icon>
                </button>
             </mat-form-field>
@@ -43,20 +51,24 @@
       </div>
 
       <div class="w3-row w3-margin-bottom">
-         <section>
-            <div class="w3-third">
-               <mat-checkbox [(ngModel)]="homeOffice" labelPosition="before">
+         <div class="w3-col s6">
+            <section>
+               <mat-checkbox formControlName="homeOffice" labelPosition="before">
                   Home Office
                </mat-checkbox>
-            </div>
-         </section>
+            </section>
+         </div>
+         <div class="w3-col s6 w3-right-align" *ngIf="record.totalTime">
+            <span>Today <b>{{numbertimeToStringtime(record.totalTime)}}</b> Hrs</span>
+         </div>
       </div>
 
       <div class="w3-row w3-section">
          <mat-form-field appearance="fill" class="record-fields">
             <mat-label>Project</mat-label>
-            <mat-select>
-               <mat-option value="option">Option</mat-option>
+            <mat-select formControlName="project">
+               <mat-option *ngFor="let project of projects" [value]="project.id" selected>{{project.code}} -
+                  {{project.name}}</mat-option>
             </mat-select>
          </mat-form-field>
       </div>
@@ -64,12 +76,13 @@
       <div class="w3-row">
          <mat-form-field appearance="fill" class="record-fields">
             <mat-label>Comment</mat-label>
-            <textarea matInput></textarea>
+            <textarea matInput formControlName="comments"></textarea>
          </mat-form-field>
       </div>
-   </form>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-   <button mat-button mat-dialog-close>Cancel</button>
-   <button mat-button cdkFocusInitial color="primary">Save</button>
-</mat-dialog-actions>
+
+   </mat-dialog-content>
+   <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close>Cancel</button>
+      <button type="submit" mat-raised-button color="primary" [disabled]="!recordForm.valid">Save</button>
+   </mat-dialog-actions>
+</form>
