@@ -191,10 +191,14 @@ export class EntryListComponent implements OnInit {
       data: { 
         record: timeEntry, 
         projects: this.assignedProjects,
-        settings: new Settings(this.account.settings)
+        settings: new Settings(this.account.settings),
+        dayRecords: this.recordDays[index].records
       }
     });
-    console.log(this.account)
+    
+    recordDialogRef.afterClosed().subscribe(result => {
+      console.log(result)
+    })
     /* const test = {
       id: "",
       startTime: new Date(),

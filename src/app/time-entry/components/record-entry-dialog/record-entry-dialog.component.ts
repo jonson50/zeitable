@@ -84,6 +84,8 @@ export class RecordEntryDialogComponent implements OnInit {
 
   onSubmit() {
     console.log(this.recordForm.value)
+    console.log(this.record)
+    this.dialogRef.close("hallo welt")
   }
 
   clearPauseField(): void {

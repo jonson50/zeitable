@@ -33,6 +33,16 @@ export class RecordsService {
     ); */
     return from(new Parse.Query("TimeEntry").equalTo('user', this.user).find());
   }
+
+  getTimeEntry(id: string): Observable<any> {
+    const TimeEntry = Parse.Object.extend("TimeEntry");
+    
+    return from(new Parse.Query(TimeEntry).get(id));
+  }
+
+  saveTimeEntry() {
+
+  }
 }
 
 
