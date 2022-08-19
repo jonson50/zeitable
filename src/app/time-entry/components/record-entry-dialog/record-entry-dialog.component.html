@@ -59,7 +59,7 @@
             </section>
          </div>
          <div class="w3-col s6 w3-right-align" *ngIf="record.totalTime">
-            <span>Today <b>{{numbertimeToStringtime(record.totalTime)}}</b> Hrs</span>
+            <span>Today <b>{{ record.formatedTotalTime }}</b> Hrs</span>
          </div>
       </div>
 
@@ -67,8 +67,8 @@
          <mat-form-field appearance="fill" class="record-fields">
             <mat-label>Project</mat-label>
             <mat-select formControlName="project">
-               <mat-option *ngFor="let project of projects" [value]="project.id" selected>{{project.code}} -
-                  {{project.name}}</mat-option>
+               <mat-option *ngFor="let project of projects" [value]="project" selected>{{project.attributes['code']}} -
+                  {{project.attributes['name']}}</mat-option>
             </mat-select>
          </mat-form-field>
       </div>
@@ -82,7 +82,7 @@
 
    </mat-dialog-content>
    <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close>Cancel</button>
+      <button mat-button mat-dialog-close cdkFocusInitial>Cancel</button>
       <button type="submit" mat-raised-button color="primary" [disabled]="!recordForm.valid">Save</button>
    </mat-dialog-actions>
 </form>

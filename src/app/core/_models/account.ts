@@ -3,7 +3,7 @@ import { IProject } from './project';
 // Interfaces
 export interface IAccount {
    id: string | undefined;
-   user: Parse.User | undefined;
+   user: Parse.User | null;
    person: any;
    roles: Parse.Role[] | undefined;
    settings: Parse.Object<Parse.Attributes>[];
@@ -22,7 +22,7 @@ export interface IBaseAccount {
 // Classes
 export class Account implements IAccount {
    id: string | undefined;
-   user: Parse.User | undefined;
+   user: Parse.User | null;
    person: any | undefined;
    roles: Parse.Role[] | undefined;
    settings: any | undefined;
@@ -30,7 +30,7 @@ export class Account implements IAccount {
    authenticated: boolean;
 
    constructor(response?: IBaseAccount) {
-      this.user = response && response.user || undefined;
+      this.user = response && response.user || null;
       this.id = response && response.user && response.user.id || undefined;
       this.person = response && response.person || undefined;
       this.roles = response && response.roles || undefined;
@@ -52,7 +52,7 @@ export class Account implements IAccount {
    //    return newUser;
    // }
 
-   public get fullName(): string {
+    get fullName(): string {
       if (!this.person.attributes.name) {
          return ''
       }

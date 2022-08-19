@@ -30,7 +30,7 @@ export class EntryListComponent implements OnInit {
   ngOnInit(): void {
     this.selectedDate = new Date();
     this.authService.account$.subscribe(
-      account => { 
+      account => {
         this.account = account;
         const parseProjects:IProject[] = account.projects;
         parseProjects.forEach((p) =>{
@@ -130,8 +130,8 @@ export class EntryListComponent implements OnInit {
     return days;
   }
   /**
-   * @param {int} index value to be either added or substracted from current month value  
-   * from current Month shown, get any other month to be displayed 
+   * @param {int} index value to be either added or substracted from current month value
+   * from current Month shown, get any other month to be displayed
    * according to the index selected
    */
   selectAnotherMonth(index: number): void {
@@ -145,7 +145,7 @@ export class EntryListComponent implements OnInit {
     this.recordDays = this.getDaysInMonth(this.selectedDate);
   }
   /**
-   * 
+   *
    * @param array array of dates in which a date is looking for
    * @param date Date beeing found inside the array
    * @returns the date founded or undefined if not
@@ -185,17 +185,13 @@ export class EntryListComponent implements OnInit {
   }
 
   addRecord(index: number): void {
-    let timeEntry = new TimeEntry();
-    timeEntry.date = this.recordDays[index].date;
     const recordDialogRef = this.dialog.open(RecordEntryDialogComponent, {
-      data: { 
-        record: timeEntry, 
-        projects: this.assignedProjects,
-        settings: new Settings(this.account.settings),
-        dayRecords: this.recordDays[index].records
+      data: {
+        recordId: "",
+        date:this.recordDays[index].date
       }
     });
-    
+
     recordDialogRef.afterClosed().subscribe(result => {
       console.log(result)
     })
