@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { ITimeEntryForm, TimeEntry } from '@app/core/_models/time-entry';
 
 @Component({
   selector: 'app-record-card',
@@ -6,12 +7,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./record-card.component.scss']
 })
 export class RecordCardComponent implements OnInit {
-
-  constructor(
-    
-  ) { }
+  @Input() record: TimeEntry = new TimeEntry();
+  data!:ITimeEntryForm;
 
   ngOnInit(): void {
+    if(this.record.id) this.data = this.record.toFormData() as ITimeEntryForm;
   }
 
 }

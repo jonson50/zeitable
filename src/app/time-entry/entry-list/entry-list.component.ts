@@ -14,11 +14,12 @@ import { NgxSpinnerService } from 'ngx-spinner';
   styleUrls: ['./entry-list.component.scss'],
 })
 export class EntryListComponent implements OnInit {
-  daysInMonth: Date[] = [];
+  isAllRecordsReady: boolean = false;
   selectedDate!: Date;
   account!: Account;
   recordDays: DayRecord[] = [];
   assignedProjects: Project[] = [];
+  records: Parse.Object[] = [];
 
   constructor(
     private authService: AuthService,
@@ -32,18 +33,27 @@ export class EntryListComponent implements OnInit {
     this.authService.account$.subscribe(
       account => {
         this.account = account;
-        const parseProjects:IProject[] = account.projects;
-        parseProjects.forEach((p) =>{
+        const parseProjects: IProject[] = account.projects;
+        parseProjects.forEach((p) => {
           this.assignedProjects.push(new Project(p));
         });
       }
     );
     this.spinnerService.show();
+    this.calendarInit(this.selectedDate);
+    this.loadRecords();
+  }
+  /**
+   * Method to get all TimeEntry records from server
+   */
+  loadRecords(): void {
     this.recordsService.timeEntries.subscribe({
       next: resp => {
         console.log(resp)
+        this.records = resp;
         //Using the TimeEntry records to fill up the calendar table.
-        this.recordDays = this.getDaysInMonth(this.selectedDate);
+        this.updateDailyRecordsInMonth(this.selectedDate);
+        this.isAllRecordsReady = true;
       },
       error: error => console.error(error),
       complete: () => {
@@ -51,23 +61,39 @@ export class EntryListComponent implements OnInit {
       }
     });
   }
+
+  calendarInit(selectedDate: Date): void {
+    let date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+    this.recordDays = [];
+    while (date.getMonth() === selectedDate.getMonth()) {
+      let dayRecord: DayRecord = new DayRecord();
+      dayRecord.date = new Date(date);
+      this.recordDays.push(dayRecord);
+      date.setDate(date.getDate() + 1);
+    }
+  }
   /**
    * @param {int} selectedDate current date containing the month from which the days are taken.
    * @return {Date[]} List with date objects for each day of the month
    */
-  getDaysInMonth(selectedDate: Date): DayRecord[] {
-    let date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
-    let days: DayRecord[] = [];
+  updateDailyRecordsInMonth(selectedDate: Date): void {
     const wdh: IWorkinDaysHours = this.account.settings.get("workingDaysHours") as IWorkinDaysHours;
     const workingDaysHours = [wdh.sunday, wdh.monday, wdh.tuesday, wdh.wednesday, wdh.thursday, wdh.friday, wdh.saturday];
     const yearHolidays: any[] = this.account.settings.get("yearHolidays");
     const exceptionWorkingDays: any[] = this.account.settings.get("exceptionWorkingDays");
 
-    while (date.getMonth() === selectedDate.getMonth()) {
-      let dayRecord: DayRecord = new DayRecord();
-      dayRecord.date = new Date(date);
+    this.recordDays.forEach(dayRecord => {
+      dayRecord.records = [];
+      // iterating records to sort them according to date
+      for (let index = 0; index < this.records.length; index++) {
+        const _startTime = new Date(this.records[index].get("startTime"));
+        if (dayRecord.date.toLocaleDateString() === _startTime.toLocaleDateString()) {
+          dayRecord.records.push(new TimeEntry(this.records[index]))
+        }
+      }
+      // Configuring every single record to display
       //handling data when is sunday
-      if (date.getDay() == 0 && workingDaysHours[date.getDay()] == 0) {
+      if (dayRecord.date.getDay() == 0 && workingDaysHours[dayRecord.date.getDay()] == 0) {
         // if it is Sunday and it is not allow to work on Sundays
         dayRecord.description = "Sunday";
         dayRecord.should = null;
@@ -76,16 +102,16 @@ export class EntryListComponent implements OnInit {
         dayRecord.opened = false;
         dayRecord.isHolliday = true;
       }
-      if (date.getDay() == 0 && workingDaysHours[date.getDay()] != 0) {
+      if (dayRecord.date.getDay() == 0 && workingDaysHours[dayRecord.date.getDay()] != 0) {
         // if it is Sunday and it is ALLOW to work on Sundays
         dayRecord.description = "Working Sunday";
-        dayRecord.should = workingDaysHours[date.getDay()];
+        dayRecord.should = workingDaysHours[dayRecord.date.getDay()];
         dayRecord.is = null;
         dayRecord.active = true;
         dayRecord.opened = false;
         dayRecord.isHolliday = true;
       }
-      if (date.getDay() != 0 && workingDaysHours[date.getDay()] == 0) {
+      if (dayRecord.date.getDay() != 0 && workingDaysHours[dayRecord.date.getDay()] == 0) {
         // if it is any other week day and is NOT ALLOW to work on that day
         dayRecord.description = "Not allow to work";
         dayRecord.should = null;
@@ -94,8 +120,9 @@ export class EntryListComponent implements OnInit {
         dayRecord.opened = false;
         dayRecord.isHolliday = false;
       }
-      const isHolliday = this.findingDateInArray(yearHolidays, date);
-      if (date.getDay() != 0 && workingDaysHours[date.getDay()] != 0 && isHolliday) {
+
+      const isHolliday = this.findingDateInArray(yearHolidays, dayRecord.date);
+      if (dayRecord.date.getDay() != 0 && workingDaysHours[dayRecord.date.getDay()] != 0 && isHolliday) {
         // if it is any other week day, it is ALLOW to work on that day
         // but it's holliday
         dayRecord.description = isHolliday.name;
@@ -105,29 +132,28 @@ export class EntryListComponent implements OnInit {
         dayRecord.opened = false;
         dayRecord.isHolliday = true;
       }
-      if (date.getDay() != 0 && workingDaysHours[date.getDay()] != 0 && !isHolliday) {
+
+      if (dayRecord.date.getDay() != 0 && workingDaysHours[dayRecord.date.getDay()] != 0 && !isHolliday) {
         // a normal working day
         dayRecord.description = "Working Day";
-        dayRecord.should = workingDaysHours[date.getDay()];
+        dayRecord.should = workingDaysHours[dayRecord.date.getDay()];
         dayRecord.is = null;
         dayRecord.active = true;
-        dayRecord.opened = this.isDateValid(date) && (date.getTime() <= this.selectedDate.getTime());
+        dayRecord.opened = this.isDateValid(dayRecord.date) && (dayRecord.date.getTime() <= this.selectedDate.getTime());
         dayRecord.isHolliday = false;
       }
+
       // finding out if there are any other authorized working day (initially didn't allow it)
-      const isExceptionWorkingDay = this.findingDateInArray(exceptionWorkingDays, date);
+      const isExceptionWorkingDay = this.findingDateInArray(exceptionWorkingDays, dayRecord.date);
       if (isExceptionWorkingDay) {
         dayRecord.description = "Exception Working Day";
-        dayRecord.should = workingDaysHours[date.getDay()];
+        dayRecord.should = workingDaysHours[dayRecord.date.getDay()];
         dayRecord.is = null;
         dayRecord.active = true;
-        dayRecord.opened = this.isDateValid(date) && (date.getTime() <= this.selectedDate.getTime());
+        dayRecord.opened = this.isDateValid(dayRecord.date) && (dayRecord.date.getTime() <= this.selectedDate.getTime());
       }
 
-      days.push(dayRecord);
-      date.setDate(date.getDate() + 1);
-    }
-    return days;
+    });
   }
   /**
    * @param {int} index value to be either added or substracted from current month value
@@ -142,7 +168,8 @@ export class EntryListComponent implements OnInit {
       this.selectedDate = currentDate;
       return;
     }
-    this.recordDays = this.getDaysInMonth(this.selectedDate);
+    this.calendarInit(this.selectedDate);
+    this.updateDailyRecordsInMonth(this.selectedDate);
   }
   /**
    *
@@ -185,15 +212,17 @@ export class EntryListComponent implements OnInit {
   }
 
   addRecord(index: number): void {
+    let record = new TimeEntry();
+    record.date = this.recordDays[index].date;
     const recordDialogRef = this.dialog.open(RecordEntryDialogComponent, {
       data: {
-        recordId: "",
-        date:this.recordDays[index].date
+        record: record
       }
     });
 
     recordDialogRef.afterClosed().subscribe(result => {
       console.log(result)
+      if (result) this.loadRecords();
     })
     /* const test = {
       id: "",
@@ -216,5 +245,9 @@ export class EntryListComponent implements OnInit {
       comments: "",
     } as ITimeEntry
     this.recordDays[index].records.push(test); */
+  }
+
+  editRecord(indexDate: number, indexRecord: number) {
+
   }
 }

@@ -14,22 +14,24 @@
 </div>
 &nbsp;
 
-<mat-accordion class="dates-entries-list">
-  <mat-expansion-panel *ngFor="let record of recordDays; let i = index" [disabled]="!record.active">
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        {{ record.date | date:'d - EEE' }}
-      </mat-panel-title>
-      <mat-panel-description>
-        <span>{{ record.description }}</span>
-        <p>should: {{record.should}} - is: &nbsp;<span class="w3-tag w3-teal w3-round">{{record.is}}</span></p>
-      </mat-panel-description>
-    </mat-expansion-panel-header>
+<ng-container *ngIf="isAllRecordsReady">
+  <mat-accordion class="dates-entries-list">
+    <mat-expansion-panel *ngFor="let record of recordDays; let i = index" [disabled]="!record.active">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ record.date | date:'d - EEE' }}
+        </mat-panel-title>
+        <mat-panel-description>
+          <span>{{ record.description }}</span>
+          <p>should: {{record.should}} - is: &nbsp;<span class="w3-tag w3-teal w3-round">{{record.ist}}</span></p>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
 
-    <button mat-raised-button color="primary" class="add-time-btn"
-      [disabled]="(!record.opened || record.records.length > 2)" (click)="addRecord(i)">
-      + Add record
-    </button>
-    <app-record-card *ngFor="let time of record.records"></app-record-card>
-  </mat-expansion-panel>
-</mat-accordion>
+      <button mat-raised-button color="primary" class="add-time-btn"
+        [disabled]="(!record.opened || record.records.length > 2)" (click)="addRecord(i)">
+        + Add record
+      </button>
+      <app-record-card *ngFor="let record of record.records" [record]="record"></app-record-card>
+    </mat-expansion-panel>
+  </mat-accordion>
+</ng-container>

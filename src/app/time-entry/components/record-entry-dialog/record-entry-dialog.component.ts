@@ -5,6 +5,7 @@ import {
 import { TimeEntry } from '@app/core/_models/time-entry';
 import { AuthService } from '@app/core/_services';
 import { RecordsService } from '@app/time-entry/services/records.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-record-entry-dialog',
@@ -15,21 +16,19 @@ export class RecordEntryDialogComponent implements OnInit {
   format = 24;
   recordForm: FormGroup;
   projects: Parse.Object[] = [];
-  settings: Parse.Object;
   record: TimeEntry;
   pauseRange: string[] = ["00:05", "00:45"];
 
   constructor(
     private authService: AuthService,
     private recordsService: RecordsService,
+    private spinnerService: NgxSpinnerService,
     public dialogRef: MatDialogRef<RecordEntryDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { recordId: string, date: Date },
+    @Inject(MAT_DIALOG_DATA) public data: { record: TimeEntry },
     private formBuilder: FormBuilder
   ) {
-    this.settings = this.authService.accountValue.settings;
     this.projects = this.authService.accountValue.projects;
-    this.record = new TimeEntry();
-    this.record.date = this.data.date;
+    this.record = this.data.record;
 
     this.recordForm = this.formBuilder.group({
       startTime: ["", [Validators.required]],
@@ -42,10 +41,13 @@ export class RecordEntryDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if(this.record.id) {
+      this.recordForm.patchValue(this.record.toFormData());
+    }
+
     this.recordForm.valueChanges.subscribe(form => {
 
       if (form.startTime && form.endTime) {
-
         let _startTime: Date = TimeEntry.dateFromStringTime(this.record.date, form.startTime);
         let _endTime: Date = TimeEntry.dateFromStringTime(this.record.date, form.endTime);
 
@@ -83,22 +85,29 @@ export class RecordEntryDialogComponent implements OnInit {
     this.record.fetchFromFormValue(this.recordForm.value);
     this.record.type = 1;
     this.record.difference = 0; // Overtime
-    this.record.settings = this.settings;
+    this.record.settings = this.authService.accountValue.settings;
     this.record.user = this.authService.accountValue.user;
 
-    console.log(this.record)
-    //this.createTimeEntry(this.record);
+    this.spinnerService.show();
+    if(!this.record.id) {
+      this.createTimeEntry(this.record.toParsePlatform());
+    }
+    
   }
 
-  createTimeEntry(data: TimeEntry):void {
+  createTimeEntry(data: Object):void {
     this.recordsService.createTimeEntry(data).subscribe({
       next: resp => {
         console.log(resp);
-        this.dialogRef.close("hallo welt");
+        this.dialogRef.close(resp);
+        this.spinnerService.hide();
       },
-      error: error => console.error(error),
+      error: error => {
+        console.error(error),
+        this.spinnerService.hide();
+      },
       complete: () => {
-        //this.spinnerService.hide();
+        
       }
     })
 

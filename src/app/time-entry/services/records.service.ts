@@ -32,7 +32,7 @@ export class RecordsService {
         })
       })
     ); */
-    return from(new Parse.Query('TimeEntry').equalTo('user', this.user).find());
+    return from(new Parse.Query('TimeEntry').equalTo('user', this.user).ascending('startTime').find());
   }
 
   getTimeEntryById(id: string): Observable<any> {
@@ -67,7 +67,7 @@ export class RecordsService {
    * @param data
    * @returns
    */
-  createTimeEntry(data: TimeEntry): Observable<any> {
+  createTimeEntry(data: Object): Observable<any> {
     const TimeEntry = Parse.Object.extend('TimeEntry');
     const timeEntry = new TimeEntry();
 
