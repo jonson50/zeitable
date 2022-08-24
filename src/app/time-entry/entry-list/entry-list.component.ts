@@ -6,6 +6,7 @@ import { DayRecord, IWorkinDaysHours, TimeEntry } from '@app/core/_models/time-e
 import { AuthService } from '@app/core/_services';
 import { RecordsService } from '../services/records.service';
 import { RecordEntryDialogComponent } from '../components/record-entry-dialog/record-entry-dialog.component';
+import { SimpleDialogComponent } from '@app/core/_components/simple-dialog.component';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
@@ -49,7 +50,6 @@ export class EntryListComponent implements OnInit {
   loadRecords(): void {
     this.recordsService.timeEntries.subscribe({
       next: resp => {
-        console.log(resp)
         this.records = resp;
         //Using the TimeEntry records to fill up the calendar table.
         this.updateDailyRecordsInMonth(this.selectedDate);
@@ -77,6 +77,7 @@ export class EntryListComponent implements OnInit {
    * @return {Date[]} List with date objects for each day of the month
    */
   updateDailyRecordsInMonth(selectedDate: Date): void {
+    const today = new Date();
     const wdh: IWorkinDaysHours = this.account.settings.get("workingDaysHours") as IWorkinDaysHours;
     const workingDaysHours = [wdh.sunday, wdh.monday, wdh.tuesday, wdh.wednesday, wdh.thursday, wdh.friday, wdh.saturday];
     const yearHolidays: any[] = this.account.settings.get("yearHolidays");
@@ -97,7 +98,6 @@ export class EntryListComponent implements OnInit {
         // if it is Sunday and it is not allow to work on Sundays
         dayRecord.description = "Sunday";
         dayRecord.should = null;
-        dayRecord.is = null;
         dayRecord.active = false;
         dayRecord.opened = false;
         dayRecord.isHolliday = true;
@@ -106,7 +106,6 @@ export class EntryListComponent implements OnInit {
         // if it is Sunday and it is ALLOW to work on Sundays
         dayRecord.description = "Working Sunday";
         dayRecord.should = workingDaysHours[dayRecord.date.getDay()];
-        dayRecord.is = null;
         dayRecord.active = true;
         dayRecord.opened = false;
         dayRecord.isHolliday = true;
@@ -115,7 +114,6 @@ export class EntryListComponent implements OnInit {
         // if it is any other week day and is NOT ALLOW to work on that day
         dayRecord.description = "Not allow to work";
         dayRecord.should = null;
-        dayRecord.is = null;
         dayRecord.active = false;
         dayRecord.opened = false;
         dayRecord.isHolliday = false;
@@ -127,7 +125,6 @@ export class EntryListComponent implements OnInit {
         // but it's holliday
         dayRecord.description = isHolliday.name;
         dayRecord.should = null;
-        dayRecord.is = null;
         dayRecord.active = false;
         dayRecord.opened = false;
         dayRecord.isHolliday = true;
@@ -137,8 +134,7 @@ export class EntryListComponent implements OnInit {
         // a normal working day
         dayRecord.description = "Working Day";
         dayRecord.should = workingDaysHours[dayRecord.date.getDay()];
-        dayRecord.is = null;
-        dayRecord.active = true;
+        dayRecord.active = (dayRecord.date < today);
         dayRecord.opened = this.isDateValid(dayRecord.date) && (dayRecord.date.getTime() <= this.selectedDate.getTime());
         dayRecord.isHolliday = false;
       }
@@ -148,9 +144,9 @@ export class EntryListComponent implements OnInit {
       if (isExceptionWorkingDay) {
         dayRecord.description = "Exception Working Day";
         dayRecord.should = workingDaysHours[dayRecord.date.getDay()];
-        dayRecord.is = null;
-        dayRecord.active = true;
+        dayRecord.active = (dayRecord.date < today);
         dayRecord.opened = this.isDateValid(dayRecord.date) && (dayRecord.date.getTime() <= this.selectedDate.getTime());
+        dayRecord.isHolliday = false;
       }
 
     });
@@ -214,40 +210,84 @@ export class EntryListComponent implements OnInit {
   addRecord(index: number): void {
     let record = new TimeEntry();
     record.date = this.recordDays[index].date;
-    const recordDialogRef = this.dialog.open(RecordEntryDialogComponent, {
+    this.recordsService.getRecordsByDate(record.date).subscribe({
+      next: resp => {
+        const recordDialogRef = this.dialog.open(RecordEntryDialogComponent, {
+          data: {
+            record: record,
+            recordsByDate: resp
+          }
+        });
+
+        recordDialogRef.afterClosed().subscribe(result => {
+          if (result) this.loadRecords();
+        })
+      },
+      error: error => {
+        console.error(error);
+      },
+      complete: () => {
+        this.spinnerService.hide();
+      }
+    });
+  }
+
+  editRecord(record: TimeEntry) {
+    this.spinnerService.show();
+    this.recordsService.getTimeEntryByRecord(record).subscribe({
+      next: resp => {
+        let record = new TimeEntry(resp);
+        this.recordsService.getRecordsByDate(record.date).subscribe({
+          next: records => {
+            const recordDialogRef = this.dialog.open(RecordEntryDialogComponent, {
+              data: {
+                record: record,
+                recordsByDate: records
+              }
+            });
+
+            recordDialogRef.afterClosed().subscribe(result => {
+              if (result) this.loadRecords();
+              this.spinnerService.hide();
+            })
+          },
+          error: error => {
+            console.error(error);
+          }
+        });
+      },
+      error: error => {
+        console.error(error);
+      },
+      complete: () => {
+        this.spinnerService.hide();
+      }
+    })
+  }
+
+  deleteRecord(record: TimeEntry) {  
+    const recordDialogRef = this.dialog.open(SimpleDialogComponent, {
       data: {
-        record: record
+        title: 'Delete Time Entry',
+        content: `Would you like to delete record from ${TimeEntry.stringTimeFromDate(record.startTime)} to ${TimeEntry.stringTimeFromDate(record.endTime)}?`,
+        cancelText: 'Cancel',
+        okText: 'Delete'
       }
     });
 
     recordDialogRef.afterClosed().subscribe(result => {
-      console.log(result)
-      if (result) this.loadRecords();
+      if(result) {
+        this.spinnerService.show();
+        this.recordsService.deleteTimeEntry(record).subscribe({
+          next: result => {
+            this.loadRecords();
+            this.spinnerService.hide();
+          },
+          error: error => {
+            console.error(error);
+          }
+        });
+      }
     })
-    /* const test = {
-      id: "",
-      startTime: new Date(),
-      endTime: new Date(),
-      pause: 1,
-      homeOffice: false,
-      totalTime: 1,
-      project: {
-        id: "",
-        projectParent: null,
-        code: "",
-        name: "",
-        active: true
-      },
-      settings: null,
-      user: this.account.user,
-      type: 1,
-      difference: 1,
-      comments: "",
-    } as ITimeEntry
-    this.recordDays[index].records.push(test); */
-  }
-
-  editRecord(indexDate: number, indexRecord: number) {
-
   }
 }

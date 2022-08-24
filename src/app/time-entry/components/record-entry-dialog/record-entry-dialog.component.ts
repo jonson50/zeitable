@@ -1,7 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
-  FormGroup, Validators, FormBuilder} from '@angular/forms'
+  FormGroup, Validators, FormBuilder
+} from '@angular/forms'
 import { TimeEntry } from '@app/core/_models/time-entry';
 import { AuthService } from '@app/core/_services';
 import { RecordsService } from '@app/time-entry/services/records.service';
@@ -24,7 +25,7 @@ export class RecordEntryDialogComponent implements OnInit {
     private recordsService: RecordsService,
     private spinnerService: NgxSpinnerService,
     public dialogRef: MatDialogRef<RecordEntryDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { record: TimeEntry },
+    @Inject(MAT_DIALOG_DATA) public data: { record: TimeEntry, recordsByDate: TimeEntry[] },
     private formBuilder: FormBuilder
   ) {
     this.projects = this.authService.accountValue.projects;
@@ -41,12 +42,7 @@ export class RecordEntryDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if(this.record.id) {
-      this.recordForm.patchValue(this.record.toFormData());
-    }
-
     this.recordForm.valueChanges.subscribe(form => {
-
       if (form.startTime && form.endTime) {
         let _startTime: Date = TimeEntry.dateFromStringTime(this.record.date, form.startTime);
         let _endTime: Date = TimeEntry.dateFromStringTime(this.record.date, form.endTime);
@@ -66,19 +62,27 @@ export class RecordEntryDialogComponent implements OnInit {
         if (_endTime.getTime() - _startTime.getTime() >= 39600000) this.pauseRange = ["01:00", "02:00"]; // for more then 11 Hrs of working time
         // calculating the worked time
         const workedTimeSec = (_endTime.getTime() - _startTime.getTime()) / 1000; // In seconds
+
         let _puaseTime = 0;
         //activating pause fieldinput if it's disabled.
-        if (this.recordForm.controls['pause'].disabled) {
+        if (this.recordForm.controls['startTime'].valid && this.recordForm.controls['endTime'].valid && this.recordForm.controls['pause'].disabled) {
           this.recordForm.controls['pause'].enable();
-        } else {
-          if (form.pause != "") {
-            _puaseTime = TimeEntry.stringtimeToNumbertime(form.pause);
-          }
         }
-        let totalTime = workedTimeSec - _puaseTime;
-        this.record.totalTime = totalTime
+        if ((this.recordForm.controls['startTime'].invalid || this.recordForm.controls['endTime'].invalid) && this.recordForm.controls['pause'].enabled) {
+          this.recordForm.controls['pause'].disable();
+        }
+        if (form.pause) {
+          _puaseTime = TimeEntry.stringtimeToNumbertime(form.pause);
+          let totalTime = workedTimeSec - _puaseTime;
+          this.record.totalTime = totalTime
+        }
       }
     });
+
+    if (this.record.id) {
+      this.record.project = this.projects.filter(value => value.id == this.record.project?.id)[0];
+      this.recordForm.patchValue(this.record.toFormData());
+    }
   }
 
   onSubmit() {
@@ -89,28 +93,39 @@ export class RecordEntryDialogComponent implements OnInit {
     this.record.user = this.authService.accountValue.user;
 
     this.spinnerService.show();
-    if(!this.record.id) {
+    if (!this.record.id) {
       this.createTimeEntry(this.record.toParsePlatform());
+    } else {
+      this.updateTimeEntry(this.record.originalParseObject, this.record.toParsePlatform());
     }
-    
   }
 
-  createTimeEntry(data: Object):void {
+  createTimeEntry(data: Object): void {
     this.recordsService.createTimeEntry(data).subscribe({
       next: resp => {
-        console.log(resp);
         this.dialogRef.close(resp);
         this.spinnerService.hide();
       },
       error: error => {
         console.error(error),
-        this.spinnerService.hide();
+          this.spinnerService.hide();
       },
       complete: () => {
-        
-      }
-    })
 
+      }
+    });
+  }
+
+  updateTimeEntry(parseObject: Parse.Object, data: Object): void {
+    this.recordsService.updateTimeEntry(parseObject, data).subscribe({
+      next: resp => {
+        this.dialogRef.close(resp);
+      },
+      error: error => {
+        console.error(error),
+          this.spinnerService.hide();
+      }
+    });
   }
   /**
    *

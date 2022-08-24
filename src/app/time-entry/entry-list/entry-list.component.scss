@@ -2,9 +2,16 @@
    display: flex;
    justify-content: space-between;
    font-size: 25px;
+   button:first-child {
+      margin-left: 5px;
+   }
+   button:last-child {
+      margin-right: 10px;
+   }
 
-   ::ng-deep .mat-icon {
-      font-size: 40px;
+   mat-icon {
+      font-size: 45px;
+      border: 1px;
       width: 20px;
       display: inline;
       vertical-align: middle;
@@ -25,7 +32,7 @@
 /* On screens that are 800px or less, header description is hide */
 @media screen and (max-width: 800px) {
    .dates-entries-list .mat-expansion-panel-header-description {
-      > span {
+      > span:first-child {
          display: none;
       }
       justify-content: end;

@@ -29,7 +29,6 @@ export interface IDayRecord {
   date: Date;
   description: string | null;
   should: number | null;
-  is: number | null;
   active: boolean;
   opened: boolean;
   records: TimeEntry[];
@@ -49,7 +48,6 @@ export class DayRecord implements IDayRecord {
   date: Date = new Date();
   description: string | null = null;
   should: number | null = null;
-  is: number | null = null;
   active: boolean = true;
   opened: boolean = false;
   records: TimeEntry[] = [];
@@ -61,6 +59,14 @@ export class DayRecord implements IDayRecord {
       sum = sum + t.totalTime;
     });
     return TimeEntry.numbertimeToStringtime(sum);
+  }
+
+  get is(): number {
+    let sum = 0;
+    this.records.forEach(t => {
+      sum = sum + t.totalTime;
+    });
+    return sum;
   }
 }
 
@@ -78,6 +84,7 @@ export class TimeEntry {
   user: Parse.User | null;
   comments: string | null;
   totalTime: number = 0;
+  private _originalParseObject!:any;
 
   constructor(timeentry?: Parse.Object) {
     this.id = timeentry && timeentry.id || "";
@@ -100,10 +107,15 @@ export class TimeEntry {
           this.startTime.getDate()
         )
         : new Date();
+    this._originalParseObject = timeentry ?? null;
   }
 
   get formatedTotalTime(): string {
     return TimeEntry.numbertimeToStringtime(this.totalTime);
+  }
+
+  get originalParseObject(): any {
+    return this._originalParseObject;
   }
 
   toFormData() {
@@ -134,12 +146,12 @@ export class TimeEntry {
   }
 
   fetchFromFormValue(values: ITimeEntryForm): void {
-    if (values.startTime) this.startTime = TimeEntry.dateFromStringTime(this.date, values.startTime);
-    if (values.endTime) this.endTime = TimeEntry.dateFromStringTime(this.date, values.endTime);
-    if (values.pause) this.pause = TimeEntry.stringtimeToNumbertime(values.pause);
-    if (values.homeOffice) this.homeOffice = values.homeOffice;
-    if (values.project) this.project = values.project;
-    if (values.comments) this.comments = values.comments;
+    this.startTime = TimeEntry.dateFromStringTime(this.date, values.startTime);
+    this.endTime = TimeEntry.dateFromStringTime(this.date, values.endTime);
+    this.pause = TimeEntry.stringtimeToNumbertime(values.pause);
+    this.homeOffice = values.homeOffice;
+    this.project = values.project;
+    this.comments = values.comments;
   }
 
   static stringTimeFromDate(date: Date | null): string {

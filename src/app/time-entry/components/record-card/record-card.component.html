@@ -19,10 +19,10 @@
       </span>
    </mat-card-content>
    <mat-card-actions align="end">
-      <button mat-stroked-button>
+      <button mat-stroked-button (click)="onClickEdit()">
          <mat-icon>drive_file_rename_outline</mat-icon>
       </button>
-      <button mat-stroked-button color="warn">
+      <button mat-stroked-button color="warn" (click)="onClickDelete()">
          <mat-icon>delete_forever</mat-icon>
       </button>
    </mat-card-actions>

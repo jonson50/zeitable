@@ -3,27 +3,34 @@
     <div>Accumulated: <span class="w3-tag w3-teal w3-round">15h 30m</span></div>
   </div>
   <div class="month-name-row">
-    <div class="w3-button month-arrow" (click)="selectAnotherMonth(-1)">
+    <!-- <div class="w3-button month-arrow" (click)="selectAnotherMonth(-1)">
       <mat-icon>navigate_before</mat-icon>
-    </div>
+    </div> -->
+    <button mat-icon-button color="primary" (click)="selectAnotherMonth(-1)">
+      <mat-icon>navigate_before</mat-icon>
+    </button>
     <div>{{ selectedDate | date:'MMMM, y'}}</div>
-    <div class="w3-button month-arrow" (click)="selectAnotherMonth(1)">
+    <!-- <div class="w3-button month-arrow" (click)="selectAnotherMonth(1)">
       <mat-icon>navigate_next</mat-icon>
-    </div>
+    </div> -->
+    <button mat-icon-button color="primary" (click)="selectAnotherMonth(1)">
+      <mat-icon>navigate_next</mat-icon>
+    </button>
   </div>
 </div>
-&nbsp;
 
 <ng-container *ngIf="isAllRecordsReady">
   <mat-accordion class="dates-entries-list">
     <mat-expansion-panel *ngFor="let record of recordDays; let i = index" [disabled]="!record.active">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          {{ record.date | date:'d - EEE' }}
+          <span [ngClass]="{'w3-text-red': record.isHolliday}">  {{ record.date | date:'dd - EEE' }}</span>
         </mat-panel-title>
         <mat-panel-description>
-          <span>{{ record.description }}</span>
-          <p>should: {{record.should}} - is: &nbsp;<span class="w3-tag w3-teal w3-round">{{record.ist}}</span></p>
+          <span [ngClass]="{'w3-text-red': record.isHolliday}">{{ record.description }}</span>
+          <span *ngIf="record.ist"><p>should be: {{record.should}}h - is:
+            <span class="w3-tag w3-round" [ngClass]="record.is > 28800 ? 'w3-red':'w3-teal'">{{record.ist}}</span></p>
+          </span>
         </mat-panel-description>
       </mat-expansion-panel-header>
 
@@ -31,7 +38,9 @@
         [disabled]="(!record.opened || record.records.length > 2)" (click)="addRecord(i)">
         + Add record
       </button>
-      <app-record-card *ngFor="let record of record.records" [record]="record"></app-record-card>
+      <app-record-card *ngFor="let record of record.records" [record]="record"
+          (editClick)="editRecord($event)" (deleteClick)="deleteRecord($event)"></app-record-card>
     </mat-expansion-panel>
   </mat-accordion>
 </ng-container>
+<br>

@@ -8,7 +8,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
     <mat-dialog-content>
       <p>{{ data.content }}</p>
     </mat-dialog-content>
-    <mat-dialog-actions>
+    <mat-dialog-actions align="end">
       <span class="flex-spacer"></span>
       <button mat-button mat-dialog-close *ngIf="data.cancelText">
         {{ data.cancelText }}
