@@ -7,7 +7,7 @@ export interface IAccount {
    person: any;
    roles: Parse.Role[] | undefined;
    settings: Parse.Object<Parse.Attributes>[];
-   projects: Parse.Object<Parse.Attributes>[] ;
+   projects: Parse.Object<Parse.Attributes>[];
    authenticated: boolean
 }
 
@@ -52,7 +52,7 @@ export class Account implements IAccount {
    //    return newUser;
    // }
 
-    get fullName(): string {
+   get fullName(): string {
       if (!this.person.attributes.name) {
          return ''
       }
@@ -70,85 +70,4 @@ export class Account implements IAccount {
    //    delete serialized.fullName
    //    return serialized
    // }
-}
-
-export interface IEWorkingDay {
-   date: string; // '2022-7-9' => "YYYY-MM-DD"
-}
-
-export interface IYearHolidays {
-   date: string;
-   name: string;
-}
-export interface ISettings {
-   id: string;
-   attributes: {
-      active: boolean;
-      carryOverHrsLastYear: number;
-      exceptionWorkingDays: IEWorkingDay[];
-      maxCompensatory: number;
-      nightHours: {
-         from: string;
-         until: string;
-      };
-      user: Parse.User | undefined;
-      workingDaysHours: {
-         monday: number;
-         tuesday: number;
-         wednesday: number;
-         thursday: number;
-         friday: number;
-         saturday: number;
-         sunday: number;
-      };
-      workingHoursWeek: number;
-      yearHolidays: IYearHolidays[];
-   }
-}
-
-export class Settings {
-   id: string | null;
-   active: boolean;
-   carryOverHrsLastYear: number;
-   exceptionWorkingDays: IEWorkingDay[];
-   maxCompensatory: number;
-   nightHours: {
-      from: string;
-      until: string;
-   };
-   user: Parse.User | undefined;
-   workingDaysHours: {
-      monday: number;
-      tuesday: number;
-      wednesday: number;
-      thursday: number;
-      friday: number;
-      saturday: number;
-      sunday: number;
-   };
-   workingHoursWeek: number;
-   yearHolidays: IYearHolidays[];
-
-   constructor(setting?: ISettings) {
-      this.id = setting && setting.id || null
-      this.active = setting && setting.attributes && setting.attributes.active || false;
-      this.carryOverHrsLastYear = setting && setting.attributes && setting.attributes.carryOverHrsLastYear || 0;
-      this.exceptionWorkingDays = setting && setting.attributes && setting.attributes.exceptionWorkingDays || [];
-      this.maxCompensatory = setting && setting.attributes && setting.attributes.maxCompensatory || 0;
-      this.nightHours = setting && setting.attributes && setting.attributes.nightHours || { from: "22:00", until: "06:00" };
-      this.user = setting && setting.attributes && setting.attributes.user || undefined;
-      const wd = {
-         monday: 8,
-         tuesday: 8,
-         wednesday: 8,
-         thursday: 8,
-         friday: 8,
-         saturday: 0,
-         sunday: 0
-      };
-      this.workingDaysHours = setting && setting.attributes && setting.attributes.workingDaysHours || wd;
-      this.workingHoursWeek = setting && setting.attributes && setting.attributes.workingHoursWeek || 40;
-      this.yearHolidays = setting && setting.attributes && setting.attributes.yearHolidays || [];
-   }
-
 }

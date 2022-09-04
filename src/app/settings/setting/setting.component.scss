@@ -1,0 +1,51 @@
+.form-field {
+  width: 100%;
+}
+
+.theme-dark {
+  :host .w3-select {
+    background-color: #454545;
+    color: rgba(255, 255, 255, .87);
+    ;
+  }
+}
+
+.theme-light {
+  :host .w3-select {
+    background-color: #F0F0F0;
+    color: rgba(0, 0, 0, .87);
+    ;
+  }
+}
+
+.stunde {
+  padding-left: 16px;
+  font-size: 36px;
+  font-weight: normal;
+}
+
+.time-fields {
+  width: 250px;
+  margin-right: 16px;
+}
+
+.bar-icon-button {
+  border: none;
+  display: inline-block;
+  padding: 8px 8px;
+  vertical-align: middle;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  background-color: inherit;
+  text-align: center;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* On screens that are 800px or less, header description is hide */
+@media screen and (max-width: 800px) {
+  .time-fields {
+    width: 100%;
+  }
+}

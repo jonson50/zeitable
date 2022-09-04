@@ -43,20 +43,16 @@ export class RecordEntryDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.recordForm.valueChanges.subscribe(form => {
-      if (form.startTime && form.endTime) {
-        let _startTime: Date = TimeEntry.dateFromStringTime(this.record.date, form.startTime);
-        let _endTime: Date = TimeEntry.dateFromStringTime(this.record.date, form.endTime);
+      const start = this.recordForm.controls['startTime'].value;
+      const end = this.recordForm.controls['endTime'].value;
+      const pause = this.recordForm.controls['pause'].value;
 
-        if (_startTime >= _endTime) {
-          this.recordForm.controls['startTime'].setErrors({ 'invalidStartTime': true });
-        } else {
-          this.recordForm.controls['startTime'].setErrors(null);
-        }
-        if ((_endTime.getTime() - _startTime.getTime()) < 3600000) {
-          this.recordForm.controls['endTime'].setErrors({ 'invalidMinTime': true });
-        } else {
-          this.recordForm.controls['endTime'].setErrors(null);
-        }
+      if (start && end) {
+        let _startTime: Date = TimeEntry.dateFromStringTime(this.record.date, start);
+        let _endTime: Date = TimeEntry.dateFromStringTime(this.record.date, end);
+
+        this.recordForm.controls['startTime'].setErrors(_startTime >= _endTime ? { 'invalidStartTime': true } : null);
+        this.recordForm.controls['endTime'].setErrors((_endTime.getTime() - _startTime.getTime()) < 3600000 ? { 'invalidMinTime': true } : null);
         // Calculating min and max for pause according to start and end time
         if (_endTime.getTime() - _startTime.getTime() >= 18000000) this.pauseRange = ["00:45", "02:00"]; // for at least 5 Hrs of working time
         if (_endTime.getTime() - _startTime.getTime() >= 39600000) this.pauseRange = ["01:00", "02:00"]; // for more then 11 Hrs of working time
@@ -66,16 +62,17 @@ export class RecordEntryDialogComponent implements OnInit {
         let _puaseTime = 0;
         //activating pause fieldinput if it's disabled.
         if (this.recordForm.controls['startTime'].valid && this.recordForm.controls['endTime'].valid && this.recordForm.controls['pause'].disabled) {
-          this.recordForm.controls['pause'].enable();
+          this.recordForm.controls['pause'].enable()
         }
         if ((this.recordForm.controls['startTime'].invalid || this.recordForm.controls['endTime'].invalid) && this.recordForm.controls['pause'].enabled) {
           this.recordForm.controls['pause'].disable();
         }
-        if (form.pause) {
-          _puaseTime = TimeEntry.stringtimeToNumbertime(form.pause);
-          let totalTime = workedTimeSec - _puaseTime;
-          this.record.totalTime = totalTime
+        if (pause) {
+          _puaseTime = TimeEntry.stringtimeToNumbertime(pause);
         }
+
+        let totalTime = workedTimeSec - _puaseTime;
+        this.record.totalTime = totalTime
       }
     });
 
@@ -83,6 +80,10 @@ export class RecordEntryDialogComponent implements OnInit {
       this.record.project = this.projects.filter(value => value.id == this.record.project?.id)[0];
       this.recordForm.patchValue(this.record.toFormData());
     }
+  }
+
+  onChangeStartEndTime() {
+
   }
 
   onSubmit() {

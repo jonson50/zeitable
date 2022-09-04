@@ -8,6 +8,7 @@ import { ITimeEntryForm, TimeEntry } from '@app/core/_models/time-entry';
 })
 export class RecordCardComponent implements OnInit {
   @Input() record: TimeEntry = new TimeEntry();
+  @Input() enableActions: boolean = true;
   @Output() editClick:EventEmitter<TimeEntry> = new EventEmitter<TimeEntry>();
   @Output() deleteClick:EventEmitter<TimeEntry> = new EventEmitter<TimeEntry>();
   data!:ITimeEntryForm;

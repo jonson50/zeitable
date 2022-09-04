@@ -100,6 +100,7 @@ export abstract class AuthService extends CacheService {
       // getting the current settings for the user
       const query = new Parse.Query("Setting");
       query.equalTo("user", user);
+      query.equalTo("year", new Date().getFullYear()); // get Settings for current year and active
       query.equalTo("active", true);
       query.descending("updatedAt");
       const settings = await query.first();

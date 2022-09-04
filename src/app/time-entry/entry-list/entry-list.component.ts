@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Account, Settings } from '@app/core/_models/account';
+import { Account } from '@app/core/_models/account';
+import { Settings } from '@app/core/_models/setting';
 import { IProject, Project } from '@app/core/_models/project';
 import { DayRecord, IWorkinDaysHours, TimeEntry } from '@app/core/_models/time-entry';
 import { AuthService } from '@app/core/_services';
@@ -34,6 +35,7 @@ export class EntryListComponent implements OnInit {
     this.authService.account$.subscribe(
       account => {
         this.account = account;
+        console.log(account.settings)
         const parseProjects: IProject[] = account.projects;
         parseProjects.forEach((p) => {
           this.assignedProjects.push(new Project(p));
@@ -118,7 +120,6 @@ export class EntryListComponent implements OnInit {
         dayRecord.opened = false;
         dayRecord.isHolliday = false;
       }
-
       const isHolliday = this.findingDateInArray(yearHolidays, dayRecord.date);
       if (dayRecord.date.getDay() != 0 && workingDaysHours[dayRecord.date.getDay()] != 0 && isHolliday) {
         // if it is any other week day, it is ALLOW to work on that day
@@ -141,6 +142,7 @@ export class EntryListComponent implements OnInit {
 
       // finding out if there are any other authorized working day (initially didn't allow it)
       const isExceptionWorkingDay = this.findingDateInArray(exceptionWorkingDays, dayRecord.date);
+      //console.log(isExceptionWorkingDay)
       if (isExceptionWorkingDay) {
         dayRecord.description = "Exception Working Day";
         dayRecord.should = workingDaysHours[dayRecord.date.getDay()];
@@ -175,10 +177,8 @@ export class EntryListComponent implements OnInit {
    */
   findingDateInArray(array: any, date: Date): any {
     return array.find((d: any) => {
-      let anyDay = new Date(d["date"]);
-      const savedHolliday = `${anyDay.getFullYear()}+${anyDay.getDate()}+${anyDay.getDay()}`;
-      const currentIterationDay = `${date.getFullYear()}+${date.getDate()}+${date.getDay()}`;
-      return savedHolliday == currentIterationDay;
+      let anyDay = d.hasOwnProperty('date') ? new Date(d['date']) : new Date(d);
+      return anyDay.toDateString() == date.toDateString();
     });
   }
   /**

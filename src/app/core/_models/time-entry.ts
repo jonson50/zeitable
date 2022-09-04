@@ -68,6 +68,11 @@ export class DayRecord implements IDayRecord {
     });
     return sum;
   }
+
+  get shouldInTime(): number {
+    if(!this.should) return 0;
+    return (this.should * 3600);
+  }
 }
 
 export class TimeEntry {

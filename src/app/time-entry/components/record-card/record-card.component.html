@@ -18,9 +18,9 @@
          <span>{{ data.comments }}</span>
       </span>
    </mat-card-content>
-   <mat-card-actions align="end">
+   <mat-card-actions align="end" *ngIf="enableActions">
       <button mat-stroked-button (click)="onClickEdit()">
-         <mat-icon>drive_file_rename_outline</mat-icon>
+         <mat-icon>edit</mat-icon>
       </button>
       <button mat-stroked-button color="warn" (click)="onClickDelete()">
          <mat-icon>delete_forever</mat-icon>

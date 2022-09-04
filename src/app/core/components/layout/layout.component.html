@@ -3,7 +3,7 @@
       <mat-icon *ngIf="!sidenav.opened"> format_indent_increase </mat-icon>
       <mat-icon *ngIf="sidenav.opened"> format_indent_decrease </mat-icon>
    </button>
-   zeitable<strong>QMS</strong>
+   <strong>Zeit</strong>table
    <span class="toolbar-spacer"></span>
    <span>
       <mat-slide-toggle (change)="onDarkModeSwitched($event)">Dark Mode</mat-slide-toggle>
@@ -47,14 +47,20 @@
             <span>Config</span>
          </a>
          <p class="menu-label">Administration</p>
-         <a mat-button class="menu-button w3-bar-item">
+         <a mat-button class="menu-button w3-bar-item" routerLink="/settings" routerLinkActive="selected"
+         [routerLinkActiveOptions]="{ exact: true }">
             <mat-icon>person</mat-icon>
-            <span>Profile</span>
+            <span>Settings</span>
          </a>
-         <a mat-button class="menu-button w3-bar-item">
+         <a mat-button class="menu-button w3-bar-item" routerLink="/settings/hollidays" routerLinkActive="selected"
+         [routerLinkActiveOptions]="{ exact: true }">
             <mat-icon>person</mat-icon>
-            <span>Users</span>
+            <span>Year Hollidays</span>
          </a>
+         <!-- <a mat-button class="menu-button w3-bar-item">
+            <mat-icon>person</mat-icon>
+            <span>Settings</span>
+         </a> -->
       </div>
    </mat-sidenav>
    <mat-sidenav-content>

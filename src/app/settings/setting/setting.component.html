@@ -1,0 +1,173 @@
+<div class="w3-container">
+   <h2>User Settings</h2>
+   <!-- <form class="demo-form" [formGroup]="recordForm" (ngSubmit)="onSubmit()" novalidate> -->
+   <form class="demo-form" [formGroup]="settingForm" (ngSubmit)="onSubmit()" novalidate>
+
+      <div class="w3-margin-bottom" *ngIf="isSettingsLoaded">
+         <button mat-raised-button color="primary" type="submit">Update</button>
+      </div>
+
+      <mat-form-field class="form-field" appearance="fill">
+         <mat-label>Employee</mat-label>
+         <input type="text" matInput formControlName="employee" [matAutocomplete]="auto">
+         <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="optionSelected($event)"
+            (closed)="closeEmployeeSearcher($event)">
+            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+               {{option.attributes['name']}}
+            </mat-option>
+         </mat-autocomplete>
+      </mat-form-field>
+
+      <ng-container *ngIf="isSettingsLoaded">
+         <mat-divider></mat-divider>
+         <h3>For Year</h3>
+         <p><span class="stunde">{{ userSettings.year }}</span></p>
+
+         <mat-divider></mat-divider>
+         <h3>Hours per Week</h3>
+         <div class="w3-cell-row" formGroupName="workingDaysHours">
+            <div class="w3-container w3-cell w3-mobile">
+               <label>Monday</label>
+               <select class="w3-select" name="monday" formControlName="monday">
+                  <option *ngFor="let hour of dailyHours" [value]="hour">{{ hour }} hrs</option>
+               </select>
+            </div>
+            <div class="w3-container w3-cell w3-mobile">
+               <label>Tuesday</label>
+               <select class="w3-select" name="tuesday" formControlName="tuesday">
+                  <option *ngFor="let hour of dailyHours" [value]="hour">{{ hour }} hrs</option>
+               </select>
+            </div>
+            <div class="w3-container w3-cell w3-mobile">
+               <label>Wednesday</label>
+               <select class="w3-select" name="wednesday" formControlName="wednesday">
+                  <option *ngFor="let hour of dailyHours" [value]="hour">{{ hour }} hrs</option>
+               </select>
+            </div>
+            <div class="w3-container w3-cell w3-mobile">
+               <label>Thursday</label>
+               <select class="w3-select" name="thursday" formControlName="thursday">
+                  <option *ngFor="let hour of dailyHours" [value]="hour">{{ hour }} hrs</option>
+               </select>
+            </div>
+            <div class="w3-container w3-cell w3-mobile">
+               <label>Friday</label>
+               <select class="w3-select" name="friday" formControlName="friday">
+                  <option *ngFor="let hour of dailyHours" [value]="hour">{{ hour }} hrs</option>
+               </select>
+            </div>
+            <div class="w3-container w3-cell w3-mobile">
+               <label>Saturday</label>
+               <select class="w3-select" name="saturday" formControlName="saturday">
+                  <option *ngFor="let hour of dailyHours" [value]="hour">{{ hour }} hrs</option>
+               </select>
+            </div>
+            <div class="w3-container w3-cell w3-mobile">
+               <label>Sunday</label>
+               <select class="w3-select" name="sunday" formControlName="sunday">
+                  <option *ngFor="let hour of dailyHours" [value]="hour">{{ hour }} hrs</option>
+               </select>
+            </div>
+         </div>
+         <p><span class="stunde">45</span> working hours pro Woche</p>
+         <mat-divider></mat-divider>
+
+         <h3>Nigth Hours</h3>
+         <div class="" formGroupName="nightHours">
+            <div class="w3-cell w3-mobile">
+               <mat-form-field appearance="fill" class="time-fields">
+                  <mat-label (click)="pickerA.open()">Start at</mat-label>
+                  <input matInput name="from" formControlName="from" [ngxMatTimepicker]="pickerA"
+                     [format]="24" placeholder="Start" readonly />
+                  <button matSuffix (click)="pickerA.open()" mat-icon-button aria-label="Clear" type="button">
+                     <mat-icon>
+                        watch_later
+                     </mat-icon>
+                  </button>
+                  <!-- <mat-error *ngIf="recordForm.get('startTime')?.hasError('invalidStartTime')">
+               Should be earlier than End Time
+            </mat-error> -->
+               </mat-form-field>
+               <ngx-mat-timepicker #pickerA [minutesGap]="5"></ngx-mat-timepicker>
+            </div>
+            <div class="w3-cell w3-mobile">
+               <mat-form-field appearance="fill" class="time-fields">
+                  <mat-label (click)="pickerB.open()">End Time</mat-label>
+                  <input matInput name="until" formControlName="until" [ngxMatTimepicker]="pickerB" [format]="24"
+                     placeholder="End" readonly />
+                  <button matSuffix (click)="pickerB.open()" mat-icon-button aria-label="Clear" type="button">
+                     <mat-icon>
+                        watch_later
+                     </mat-icon>
+                  </button>
+                  <!-- <mat-error *ngIf="recordForm.get('startTime')?.hasError('invalidStartTime')">
+               At least 1 Hr later than Start Time
+            </mat-error> -->
+               </mat-form-field>
+               <ngx-mat-timepicker #pickerB [minutesGap]="5"></ngx-mat-timepicker>
+            </div>
+         </div>
+         <mat-divider></mat-divider>
+
+         <h3>Working Region / Zone</h3>
+         <mat-form-field appearance="fill">
+            <mat-label>Region/Zone</mat-label>
+            <mat-select>
+               <mat-option selected></mat-option>
+            </mat-select>
+         </mat-form-field>
+         <mat-divider></mat-divider>
+
+         <h3>Validity Of Time Entry</h3>
+         <p>Enter here the maximun previous days for allowing to record a time entry.</p>
+         <mat-form-field appearance="fill">
+            <mat-label>Validity</mat-label>
+            <mat-select formControlName="validityTimeEntry">
+               <mat-option *ngFor="let validity of validityValues" [value]="validity.value" selected>{{validity.name}}</mat-option>
+            </mat-select>
+         </mat-form-field>
+         <mat-divider></mat-divider>
+
+         <h3>Maximal Compensatory Hours</h3>
+         <mat-form-field appearance="fill" floatLabel="always">
+            <mat-label>Hours</mat-label>
+            <input matInput type="number" placeholder="0" formControlName="maxCompensatory">
+          </mat-form-field>
+         
+         <mat-divider></mat-divider>
+         <h3>Exceptional Working Days</h3>
+         <div class="w3-cell">
+            <mat-form-field appearance="fill">
+               <mat-label>Choose a date</mat-label>
+               <input matInput [matDatepicker]="picker" [formControl]="exceptionDayControl">
+               <!-- <mat-hint>MM/DD/YYYY</mat-hint> -->
+               <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+               <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+         </div>
+
+         <div class="w3-cell">
+            <span class="w3-margin-left">
+               <button mat-raised-button color="primary" type="button" (click)="addExceptionalDay()">Add</button>
+            </span>
+         </div>
+         <ul class="w3-ul w3-card-2">
+            <li class="w3-bar" *ngFor="let day of userSettings.exceptionWorkingDays; let i = index">
+               <div class="w3-bar-item w3-xlarge w3-right w3-text-red bar-icon-button" (click)="deleteExceptionDay(i)">
+                  <i class="material-icons">delete</i>
+               </div>
+               <div class="w3-bar-item w3-large">
+                  {{ day | date }}
+               </div>
+            </li>
+         </ul>
+      </ng-container>
+   </form>
+   <ng-container *ngIf="isSettingError">
+      <div class="w3-panel w3-red">
+         <h3>Error!</h3>
+         <p>This employee does not have any setting yet.</p>
+      </div>
+   </ng-container>
+   <br>
+</div>

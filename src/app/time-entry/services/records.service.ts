@@ -9,8 +9,6 @@ import { TimeEntry } from '@app/core/_models/time-entry';
 })
 export class RecordsService {
   // variables
-  //private recordsSubject: BehaviorSubject<ITimeEntry>();
-  //private records: Observable<ITimeEntry>[] = [];
   private user: Parse.User | null;
 
   constructor(private authService: AuthService) {

@@ -20,6 +20,7 @@ const routes: Routes = [
       children: [
          { path: 'dashboard', component: DashboardComponent },
          { path: 'timeentry', loadChildren: () => import('./time-entry/time-entry.module').then(m => m.TimeEntryModule) },
+         { path: 'settings', loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule) },
          { path: 'temporal', component: TemporalHomeComponent, pathMatch: 'full' },
          { path: '**', redirectTo: '/dashboard' },
       ]

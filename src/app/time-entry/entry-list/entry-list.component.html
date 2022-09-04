@@ -29,7 +29,7 @@
         <mat-panel-description>
           <span [ngClass]="{'w3-text-red': record.isHolliday}">{{ record.description }}</span>
           <span *ngIf="record.ist"><p>should be: {{record.should}}h - is:
-            <span class="w3-tag w3-round" [ngClass]="record.is > 28800 ? 'w3-red':'w3-teal'">{{record.ist}}</span></p>
+            <span class="w3-tag w3-round" [ngClass]="record.is > record.shouldInTime ? 'w3-red':'w3-teal'">{{record.ist}}</span></p>
           </span>
         </mat-panel-description>
       </mat-expansion-panel-header>
@@ -38,7 +38,7 @@
         [disabled]="(!record.opened || record.records.length > 2)" (click)="addRecord(i)">
         + Add record
       </button>
-      <app-record-card *ngFor="let record of record.records" [record]="record"
+      <app-record-card *ngFor="let _record of record.records" [record]="_record" [enableActions]="!(!record.opened || record.records.length > 2)"
           (editClick)="editRecord($event)" (deleteClick)="deleteRecord($event)"></app-record-card>
     </mat-expansion-panel>
   </mat-accordion>

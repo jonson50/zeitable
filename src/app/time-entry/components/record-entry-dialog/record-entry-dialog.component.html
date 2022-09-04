@@ -22,7 +22,7 @@
          <div class="w3-col m4">
             <mat-form-field appearance="fill" class="time-fields endtimeclass">
                <mat-label (click)="pickerB.open()">End Time</mat-label>
-               <input matInput name="endTim" formControlName="endTime" [ngxMatTimepicker]="pickerB" [format]="format"
+               <input matInput name="endTime" formControlName="endTime" [ngxMatTimepicker]="pickerB" [format]="format"
                   placeholder="End" readonly/>
                <button matSuffix (click)="pickerB.open()" mat-icon-button aria-label="Clear" type="button">
                   <mat-icon>
