@@ -39,8 +39,13 @@ export class SettingsService {
     return from(query.first());
   }
 
-  updateSettings(parseObject:Parse.Object, data: Object): Observable<any> { 
+  updateSettings(parseObject:Parse.Object, data: Object): Observable<any> {
     return from(parseObject.save(data));
+  }
+
+  getZones():Observable<any> {
+    const query = new Parse.Query("Zone");
+    return from(query.find());
   }
 }
 

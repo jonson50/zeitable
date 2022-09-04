@@ -19,15 +19,17 @@ export class SettingComponent implements OnInit {
   filteredOptions!: Observable<Parse.Object[]>;
   dailyHours = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
   validityValues = [
-    { name:'1 Week', value: 7},
-    { name:'2 Weeks', value: 14},
-    { name:'3 Weeks', value: 20},
-    { name:'4 Weeks', value: 30},
+    { name: '1 Week', value: 7 },
+    { name: '2 Weeks', value: 14 },
+    { name: '3 Weeks', value: 20 },
+    { name: '4 Weeks', value: 30 },
   ];
   userSettings!: Settings;
   exceptionDayControl: any = new FormControl<Date | null>(null);
   isSettingsLoaded: boolean = false;
   isSettingError: boolean = false;
+  hoursPerWeek = 0;
+  zones: Parse.Object[] = [];
 
   constructor(
     private settingsService: SettingsService,
@@ -48,6 +50,7 @@ export class SettingComponent implements OnInit {
         from: ["", [Validators.required]],
         until: ["", [Validators.required]]
       }),
+      zone: ["", [Validators.required]],
       maxCompensatory: ["", [Validators.required]],
       validityTimeEntry: ["", [Validators.required]],
       exceptionWorkingDays: [""]
@@ -66,6 +69,9 @@ export class SettingComponent implements OnInit {
             return name ? this._filter(name as string) : this.options.slice();
           }),
         );
+        this.settingForm.controls['workingDaysHours'].valueChanges.subscribe(val => {
+          this.hoursPerWeek = this.sumHoursInWeek(val);
+        });
         this.spinnerService.hide();
       },
       error: error => {
@@ -80,6 +86,16 @@ export class SettingComponent implements OnInit {
       console.log('Calling Employees Settings');
       this.getUserSettings(this.selectedEmployee?.get('user'));
     }
+  }
+
+  sumHoursInWeek(week: Object): number {
+    let sum = 0;
+    (Object.keys(week) as Array<keyof typeof week>)
+      .forEach((key, index) => {
+        sum += parseFloat(week[key].toString());
+      });
+
+    return sum;
   }
 
   closeEmployeeSearcher(_event: any): void {
@@ -102,63 +118,75 @@ export class SettingComponent implements OnInit {
     this.spinnerService.show();
     this.isSettingsLoaded = false;
     this.isSettingError = false;
-    this.settingsService.getUserSettings(user).subscribe({
-      next: setting => {
-        if (!setting) {
-          console.error('This user does not have any setting available');
-          this.isSettingError = true;
-          return;
-        }
-        this.isSettingsLoaded = true;
-        this.userSettings = new Settings();
-        this.userSettings.patchParseValue(setting);
-        console.log(this.userSettings);
-        console.log(this.userSettings.toParsePlatform());
-        this.settingForm.patchValue(this.userSettings);
-        //this.spinnerService.hide();
+
+    this.settingsService.getZones().subscribe({
+      next: zones => {
+        this.zones = zones;
+        this.settingsService.getUserSettings(user).subscribe({
+          next: setting => {
+            if (!setting) {
+              console.error('This user does not have any setting available');
+              this.isSettingError = true;
+              return;
+            }
+            this.isSettingsLoaded = true;
+            this.userSettings = new Settings();
+            this.userSettings.patchParseValue(setting);
+            this.userSettings.exceptionWorkingDays.sort((a: Date, b: Date) => (a.getTime() - b.getTime()));
+            this.userSettings.zone = this.zones.filter(value => value.id == this.userSettings.zone?.id)[0]; // Important
+            this.settingForm.patchValue(this.userSettings);
+            this.spinnerService.hide();
+          },
+          error: error => {
+            console.error(error);
+          },
+          complete: () => {
+            this.spinnerService.hide();
+          }
+        });
       },
-      error: error => {
-        console.error(error);
-      },
-      complete: () => {
-        this.spinnerService.hide();
-      }
+      error: error => console.error(error)
     });
   }
 
-  addExceptionalDay():void {
+  addExceptionalDay(): void {
     console.log(this.exceptionDayControl)
-    if(this.exceptionDayControl.value){
+    if (this.exceptionDayControl.value) {
       const day = this.exceptionDayControl.value;
       this.userSettings.exceptionWorkingDays.push(day);
+      this.userSettings.exceptionWorkingDays.sort((a: Date, b: Date) => (a.getTime() - b.getTime()));
     }
     this.exceptionDayControl.reset()
   }
 
-  deleteExceptionDay(index:number):void {
+  deleteExceptionDay(index: number): void {
 
     this.userSettings.exceptionWorkingDays.splice(index, 1);
     console.log(this.userSettings)
   }
 
-  onSubmit():void {
+  onSubmit(): void {
     const formValues = this.settingForm.value;
     this.userSettings.exceptionWorkingDays = formValues.exceptionWorkingDays;
-    this.userSettings.maxCompensatory = formValues.maxCompensatory
-    this.userSettings.nightHours = formValues.nightHours
-    this.userSettings.validityTimeEntry = formValues.validityTimeEntry
-    this.userSettings.workingDaysHours =formValues.workingDaysHours
-
-    if(this.userSettings.originalParseObject){
+    this.userSettings.maxCompensatory = formValues.maxCompensatory;
+    this.userSettings.nightHours = formValues.nightHours;
+    this.userSettings.validityTimeEntry = formValues.validityTimeEntry;
+    this.userSettings.workingDaysHours = formValues.workingDaysHours;
+    this.userSettings.zone = formValues.zone;
+    
+    this.spinnerService.show();
+    if (this.userSettings.originalParseObject) {
       this.settingsService.updateSettings(this.userSettings.originalParseObject, this.userSettings.toParsePlatform())
-      .subscribe({
-        next: response => {
-          console.log(response);
-        },
-        error: error => {
-          console.error(error)
-        }
-      });
+        .subscribe({
+          next: response => {
+            console.log(response);
+            this.spinnerService.hide();
+          },
+          error: error => {
+            console.error(error);
+            this.spinnerService.hide();
+          }
+        });
     }
   }
 }

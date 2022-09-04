@@ -77,7 +77,7 @@ export class RecordEntryDialogComponent implements OnInit {
     });
 
     if (this.record.id) {
-      this.record.project = this.projects.filter(value => value.id == this.record.project?.id)[0];
+      this.record.project = this.projects.filter(value => value.id == this.record.project?.id)[0]; // Important
       this.recordForm.patchValue(this.record.toFormData());
     }
   }

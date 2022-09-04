@@ -20,7 +20,6 @@ export class EntryListComponent implements OnInit {
   selectedDate!: Date;
   account!: Account;
   recordDays: DayRecord[] = [];
-  assignedProjects: Project[] = [];
   records: Parse.Object[] = [];
 
   constructor(
@@ -35,11 +34,7 @@ export class EntryListComponent implements OnInit {
     this.authService.account$.subscribe(
       account => {
         this.account = account;
-        console.log(account.settings)
-        const parseProjects: IProject[] = account.projects;
-        parseProjects.forEach((p) => {
-          this.assignedProjects.push(new Project(p));
-        });
+        console.log(account)
       }
     );
     this.spinnerService.show();
@@ -54,7 +49,7 @@ export class EntryListComponent implements OnInit {
       next: resp => {
         this.records = resp;
         //Using the TimeEntry records to fill up the calendar table.
-        this.updateDailyRecordsInMonth(this.selectedDate);
+        this.updateDailyRecordsInMonth();
         this.isAllRecordsReady = true;
       },
       error: error => console.error(error),
@@ -78,7 +73,7 @@ export class EntryListComponent implements OnInit {
    * @param {int} selectedDate current date containing the month from which the days are taken.
    * @return {Date[]} List with date objects for each day of the month
    */
-  updateDailyRecordsInMonth(selectedDate: Date): void {
+  updateDailyRecordsInMonth(): void {
     const today = new Date();
     const wdh: IWorkinDaysHours = this.account.settings.get("workingDaysHours") as IWorkinDaysHours;
     const workingDaysHours = [wdh.sunday, wdh.monday, wdh.tuesday, wdh.wednesday, wdh.thursday, wdh.friday, wdh.saturday];
@@ -167,7 +162,7 @@ export class EntryListComponent implements OnInit {
       return;
     }
     this.calendarInit(this.selectedDate);
-    this.updateDailyRecordsInMonth(this.selectedDate);
+    this.updateDailyRecordsInMonth();
   }
   /**
    *

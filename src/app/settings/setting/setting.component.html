@@ -69,7 +69,7 @@
                </select>
             </div>
          </div>
-         <p><span class="stunde">45</span> working hours pro Woche</p>
+         <p><span class="stunde">{{ hoursPerWeek }}</span> working hours pro Woche</p>
          <mat-divider></mat-divider>
 
          <h3>Nigth Hours</h3>
@@ -77,8 +77,8 @@
             <div class="w3-cell w3-mobile">
                <mat-form-field appearance="fill" class="time-fields">
                   <mat-label (click)="pickerA.open()">Start at</mat-label>
-                  <input matInput name="from" formControlName="from" [ngxMatTimepicker]="pickerA"
-                     [format]="24" placeholder="Start" readonly />
+                  <input matInput name="from" formControlName="from" [ngxMatTimepicker]="pickerA" [format]="24"
+                     placeholder="Start" readonly />
                   <button matSuffix (click)="pickerA.open()" mat-icon-button aria-label="Clear" type="button">
                      <mat-icon>
                         watch_later
@@ -112,8 +112,8 @@
          <h3>Working Region / Zone</h3>
          <mat-form-field appearance="fill">
             <mat-label>Region/Zone</mat-label>
-            <mat-select>
-               <mat-option selected></mat-option>
+            <mat-select formControlName="zone">
+               <mat-option *ngFor="let zone of zones" [value]="zone" selected>{{zone.attributes['name']}}</mat-option>
             </mat-select>
          </mat-form-field>
          <mat-divider></mat-divider>
@@ -123,7 +123,8 @@
          <mat-form-field appearance="fill">
             <mat-label>Validity</mat-label>
             <mat-select formControlName="validityTimeEntry">
-               <mat-option *ngFor="let validity of validityValues" [value]="validity.value" selected>{{validity.name}}</mat-option>
+               <mat-option *ngFor="let validity of validityValues" [value]="validity.value" selected>{{validity.name}}
+               </mat-option>
             </mat-select>
          </mat-form-field>
          <mat-divider></mat-divider>
@@ -132,8 +133,8 @@
          <mat-form-field appearance="fill" floatLabel="always">
             <mat-label>Hours</mat-label>
             <input matInput type="number" placeholder="0" formControlName="maxCompensatory">
-          </mat-form-field>
-         
+         </mat-form-field>
+
          <mat-divider></mat-divider>
          <h3>Exceptional Working Days</h3>
          <div class="w3-cell">

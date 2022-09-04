@@ -22,6 +22,7 @@ export class Settings {
     saturday: number;
     sunday: number;
   };
+  zone:Parse.Object | undefined;
   validityTimeEntry: number;
   yearHolidays: IYearHolidays[];
   private _originalParseObject!: Parse.Object | undefined;
@@ -46,7 +47,6 @@ export class Settings {
   }
 
   toParsePlatform(): Object {
-    
     return {
       carryOverHrsLastYear: this.carryOverHrsLastYear,
       exceptionWorkingDays: this.exceptionWorkingDays,
@@ -55,7 +55,8 @@ export class Settings {
       validityTimeEntry: this.validityTimeEntry,
       workingDaysHours: this.workingDaysHours,
       year: this.year,
-      yearHolidays: this.yearHolidays
+      yearHolidays: this.yearHolidays,
+      zone: this.zone
     }
   }
 
@@ -69,6 +70,7 @@ export class Settings {
     this.yearHolidays = setting.attributes['yearHolidays'];
     this.exceptionWorkingDays = [];
     this.workingDaysHours = setting.attributes['workingDaysHours'];
+    this.zone = setting.attributes['zone'];
     const exceptionDays = setting.attributes['exceptionWorkingDays'];
     exceptionDays.forEach((day: string) => {
       this.exceptionWorkingDays.push(new Date(day))
