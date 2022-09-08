@@ -32,22 +32,6 @@ export class RecordsService {
     ); */
     return from(new Parse.Query('TimeEntry').equalTo('user', this.user).ascending('startTime').find());
   }
-
-  getTimeEntryByRecord(searchedRecord: TimeEntry): Observable<any> {
-    const query = new Parse.Query(Parse.Object.extend('TimeEntry'));
-    return from(query.get(searchedRecord.id));
-  }
-
-  getRecordsByDate(date: Date): Observable<any> {
-    let initDate = new Date(date);
-    let endDate = new Date(initDate);
-    endDate.setDate(initDate.getDate() + 1);
-    const query = new Parse.Query(Parse.Object.extend('TimeEntry'));
-    query.greaterThanOrEqualTo('startTime', initDate);
-    query.lessThan('startTime', endDate);
-
-    return from(query.ascending('startTime').find())
-  }
   /**
    *
    * @param data
@@ -60,12 +44,19 @@ export class RecordsService {
     return from(timeEntry.save(data));
   }
 
-  updateTimeEntry(parseObject:Parse.Object, data: Object): Observable<any> { 
+  updateTimeEntry(parseObject:Parse.Object, data: Object): Observable<any> {
     return from(parseObject.save(data));
   }
 
-  deleteTimeEntry(record:TimeEntry): Observable<any> { 
+  deleteTimeEntry(record:TimeEntry): Observable<any> {
     const timeEntry:Parse.Object = record.originalParseObject;
     return from(timeEntry.destroy());
+  }
+
+  getHollidays(zone:Parse.Object): Observable<any> {
+   const query = new Parse.Query("Hollidays");
+      query.equalTo("zone", zone);
+      query.equalTo("year", new Date().getFullYear()); // get Settings for current year and active
+      return from(query.first());
   }
 }

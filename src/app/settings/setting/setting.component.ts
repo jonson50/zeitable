@@ -121,6 +121,7 @@ export class SettingComponent implements OnInit {
 
     this.settingsService.getZones().subscribe({
       next: zones => {
+         console.log(zones)
         this.zones = zones;
         this.settingsService.getUserSettings(user).subscribe({
           next: setting => {
@@ -173,7 +174,7 @@ export class SettingComponent implements OnInit {
     this.userSettings.validityTimeEntry = formValues.validityTimeEntry;
     this.userSettings.workingDaysHours = formValues.workingDaysHours;
     this.userSettings.zone = formValues.zone;
-    
+
     this.spinnerService.show();
     if (this.userSettings.originalParseObject) {
       this.settingsService.updateSettings(this.userSettings.originalParseObject, this.userSettings.toParsePlatform())

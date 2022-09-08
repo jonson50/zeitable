@@ -9,7 +9,8 @@ import { ITimeEntryForm, TimeEntry } from '@app/core/_models/time-entry';
 export class RecordCardComponent implements OnInit {
   @Input() record: TimeEntry = new TimeEntry();
   @Input() enableActions: boolean = true;
-  @Output() editClick:EventEmitter<TimeEntry> = new EventEmitter<TimeEntry>();
+  @Input() indexMainCard: number | null = null;
+  @Output() editClick:EventEmitter<Object> = new EventEmitter<Object>();
   @Output() deleteClick:EventEmitter<TimeEntry> = new EventEmitter<TimeEntry>();
   data!:ITimeEntryForm;
 
@@ -18,7 +19,7 @@ export class RecordCardComponent implements OnInit {
   }
 
   onClickEdit(): void {
-    this.editClick.emit(this.record);
+    this.editClick.emit({record: this.record, index: this.indexMainCard});
   }
 
   onClickDelete(): void {

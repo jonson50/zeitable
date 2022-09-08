@@ -39,6 +39,7 @@
         + Add record
       </button>
       <app-record-card *ngFor="let _record of record.records" [record]="_record" [enableActions]="!(!record.opened || record.records.length > 2)"
+         [indexMainCard] = "i"
           (editClick)="editRecord($event)" (deleteClick)="deleteRecord($event)"></app-record-card>
     </mat-expansion-panel>
   </mat-accordion>
