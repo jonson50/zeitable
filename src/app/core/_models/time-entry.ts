@@ -48,10 +48,11 @@ export class DayRecord implements IDayRecord {
   date: Date = new Date();
   description: string | null = null;
   should: number | null = null;
-  active: boolean = true;
+  active: boolean = false;
   opened: boolean = false;
   records: TimeEntry[] = [];
   isHolliday: boolean = false;
+  isAbsence: boolean = false;
 
   get ist(): string {
     let sum = 0;

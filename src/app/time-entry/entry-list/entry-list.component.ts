@@ -22,15 +22,19 @@ import { Subscription } from 'rxjs';
 })
 export class EntryListComponent implements OnInit, OnDestroy {
    isAllRecordsReady: boolean = false;
-   selectedDate!: Date;
+   selectedMonthYear!: Date; // This should be the first date of valid date, if implemented
    account!: Account;
    recordDays: DayRecord[] = [];
    records: Parse.Object[] = [];
    yearHolidays = [];
+   lastValidEntryDate!: Date; // Date of the last valid EntryTime
+   firstValidDate: Date = new Date(2022, 0, 1); // => Should come from settings
+   lastValidDate: Date = new Date(2022, 11, 31); // => should come from settings
+   today = new Date(2022, 3, 7);
 
    //Subscriptions
    hollidaysSubscription!: Subscription;
-   timeEntriesSubscription!:Subscription;
+   timeEntriesSubscription!: Subscription;
    deleteTimeEntrySubscription!: Subscription;
 
    constructor(
@@ -38,19 +42,18 @@ export class EntryListComponent implements OnInit, OnDestroy {
       private recordsService: RecordsService,
       private dialog: MatDialog,
       private spinnerService: NgxSpinnerService
-   ) {}
+   ) { }
 
    ngOnInit(): void {
-      this.selectedDate = new Date();
       this.account = this.authService.accountValue;
       console.log(this.account)
-      const zone = this.account.settings.get('zone');
+      const zone = this.account.settings.get('zone'); // => a valid settings should be verified in order to inform client to contact admin
 
       this.spinnerService.show();
       this.hollidaysSubscription = this.recordsService.getHollidays(zone).subscribe({
          next: hollidays => {
             this.yearHolidays = hollidays.get('days');
-            this.calendarInit(this.selectedDate);
+
             this.loadRecords();
          },
          error: error => {
@@ -65,6 +68,21 @@ export class EntryListComponent implements OnInit, OnDestroy {
       this.timeEntriesSubscription = this.recordsService.timeEntries.subscribe({
          next: (resp) => {
             this.records = resp;
+            let lastRecord = this.records[this.records.length - 1];
+            if (lastRecord) {
+               const lastRecordDate = lastRecord.get('startTime');
+               this.lastValidEntryDate = new Date(lastRecordDate.getFullYear(), lastRecordDate.getMonth(), lastRecordDate.getDate() + 1);
+               this.selectedMonthYear = new Date(lastRecordDate.getFullYear(), lastRecordDate.getMonth());
+            } else {
+               // This should be the initial valid data from settings
+               this.selectedMonthYear = new Date(
+                  this.account.settings.get('year'),
+                  0 // January
+               );
+               this.lastValidEntryDate = new Date(this.selectedMonthYear);
+            }
+            //this.lastValidEntryDate = new Date(2022, 0, 29); // TO DELETE
+            this.calendarInit(this.selectedMonthYear);
             //Using the TimeEntry records to fill up the calendar table.
             this.updateDailyRecordsInMonth();
             this.isAllRecordsReady = true;
@@ -91,123 +109,146 @@ export class EntryListComponent implements OnInit, OnDestroy {
       }
    }
    /**
-    * @param {int} selectedDate current date containing the month from which the days are taken.
     * @return {Date[]} List with date objects for each day of the month
     */
    updateDailyRecordsInMonth(): void {
-      const today = new Date();
-      const wdh: IWorkinDaysHours = this.account.settings.get(
-         'workingDaysHours'
-      ) as IWorkinDaysHours;
-      const workingDaysHours = [
-         wdh.sunday,
-         wdh.monday,
-         wdh.tuesday,
-         wdh.wednesday,
-         wdh.thursday,
-         wdh.friday,
-         wdh.saturday,
-      ];
-      // const yearHolidays: any[] = this.account.settings.get('yearHolidays');
-      const exceptionWorkingDays: any[] = this.account.settings.get(
-         'exceptionWorkingDays'
-      );
-
-      this.recordDays.forEach((dayRecord) => {
+      // Iterating every single Record
+      this.recordDays.forEach(dayRecord => {
          dayRecord.records = [];
+         let workingDaysHours: any[] = [];
+         let exceptionWorkingDays: any[] = [];
+         let isExceptionWorkingDay = false;
          // iterating records to sort them according to date
          for (let index = 0; index < this.records.length; index++) {
+            // Getting all setting used for the record
+            const setting = this.records[index].get('settings');
+            const wdh: IWorkinDaysHours = setting.get('workingDaysHours') as IWorkinDaysHours;
+            workingDaysHours = [
+               wdh.sunday, wdh.monday, wdh.tuesday, wdh.wednesday, wdh.thursday, wdh.friday, wdh.saturday,
+            ];
+            // const yearHolidays: any[] = this.account.settings.get('yearHolidays');
+            exceptionWorkingDays = setting.get('exceptionWorkingDays');
+
             const _startTime = new Date(this.records[index].get('startTime'));
-            if (
-               dayRecord.date.toLocaleDateString() ===
-               _startTime.toLocaleDateString()
-            ) {
-               dayRecord.records.push(new TimeEntry(this.records[index]));
+            if (dayRecord.date.toLocaleDateString() === _startTime.toLocaleDateString()) {
+               switch (this.records[index].get('type')) {
+                  case 2:
+                     dayRecord.description = 'Vacations';
+                     dayRecord.isAbsence = true;
+                     break;
+                  case 3:
+                     dayRecord.description = 'Illnes';
+                     dayRecord.isAbsence = true;
+                     break;
+                  case 4:
+                     dayRecord.description = 'Compensatory';
+                     dayRecord.isAbsence = true;
+                     break
+                  default:
+                     dayRecord.records.push(new TimeEntry(this.records[index]));
+               }
             }
          }
-         // Configuring every single record to display
-         //handling data when is sunday
-         if (
-            dayRecord.date.getDay() == 0 &&
-            workingDaysHours[dayRecord.date.getDay()] == 0
-         ) {
-            // if it is Sunday and it is not allow to work on Sundays
-            dayRecord.description = 'Sunday';
-            dayRecord.should = null;
-            dayRecord.active = false;
-            dayRecord.opened = false;
-            dayRecord.isHolliday = true;
-         }
-         if (
-            dayRecord.date.getDay() == 0 &&
-            workingDaysHours[dayRecord.date.getDay()] != 0
-         ) {
-            // if it is Sunday and it is ALLOW to work on Sundays
-            dayRecord.description = 'Working Sunday';
-            dayRecord.should = workingDaysHours[dayRecord.date.getDay()];
-            dayRecord.active = true;
-            dayRecord.opened = false;
-            dayRecord.isHolliday = true;
-         }
-         if (
-            dayRecord.date.getDay() != 0 &&
-            workingDaysHours[dayRecord.date.getDay()] == 0
-         ) {
-            // if it is any other week day and is NOT ALLOW to work on that day
-            dayRecord.description = 'Not allow to work';
-            dayRecord.should = null;
-            dayRecord.active = false;
-            dayRecord.opened = false;
-            dayRecord.isHolliday = false;
-         }
-         const isHolliday = this.findingDateInArray(
-            this.yearHolidays,
-            dayRecord.date
-         );
-         if (
-            dayRecord.date.getDay() != 0 &&
-            workingDaysHours[dayRecord.date.getDay()] != 0 &&
-            isHolliday
-         ) {
-            // if it is any other week day, it is ALLOW to work on that day
-            // but it's holliday
-            dayRecord.description = isHolliday.name;
-            dayRecord.should = null;
-            dayRecord.active = false;
-            dayRecord.opened = false;
-            dayRecord.isHolliday = true;
+         // Configuring every single record to display 
+         if (workingDaysHours[dayRecord.date.getDay()] == 0 || dayRecord.isAbsence) {
+            // Days here are NOT allow to work
+            if (!dayRecord.isAbsence) {
+               switch (dayRecord.date.getDay()) {
+                  case 0:
+                     dayRecord.description = 'Sunday';
+                     dayRecord.isHolliday = true;
+                     break;
+                  case 6:
+                     dayRecord.description = 'Saturday';
+                     break;
+                  default:
+                     dayRecord.description = 'Not allow to work';
+               }
+            }
+            if (this.dateToISOString(dayRecord.date) == this.dateToISOString(this.lastValidEntryDate)) {
+               this.lastValidEntryDate.setDate(this.lastValidEntryDate.getDate() + 1);
+            }
+            /* HERE TO HANDLE THE EXCEPTIION WORKING DAYS */
+            isExceptionWorkingDay = this.findingDateInArray(exceptionWorkingDays, dayRecord.date);
          }
 
-         if (
-            dayRecord.date.getDay() != 0 &&
-            workingDaysHours[dayRecord.date.getDay()] != 0 &&
-            !isHolliday
-         ) {
-            // a normal working day
-            dayRecord.description = 'Working Day';
-            dayRecord.should = workingDaysHours[dayRecord.date.getDay()];
-            dayRecord.active = dayRecord.date < today;
-            dayRecord.opened =
-               this.isDateValid(dayRecord.date) &&
-               dayRecord.date.getTime() <= this.selectedDate.getTime();
-            dayRecord.isHolliday = false;
+         if (workingDaysHours[dayRecord.date.getDay()] != 0 || isExceptionWorkingDay) {
+            // Days here are allow to work
+            switch (dayRecord.date.getDay()) {
+               case 0:
+                  dayRecord.description = isExceptionWorkingDay ? 'Exception Working Sunday' : 'Working Sunday';
+                  dayRecord.isHolliday = true;
+                  break;
+               case 6:
+                  dayRecord.description = isExceptionWorkingDay ? 'Exception Working Saturday' : 'Working Saturday';
+                  break;
+               default:
+                  dayRecord.description = isExceptionWorkingDay ? 'Exception Working Day' : 'Working Day';
+            }
+            if (dayRecord.date.getTime() <= this.lastValidEntryDate.getTime() &&
+               dayRecord.date.getTime() <= this.today.getTime()) {
+               dayRecord.active = true;
+               dayRecord.should = workingDaysHours[dayRecord.date.getDay()];
+               // Validating period of TimeEntry activation
+               //let lowerValidLimitDate = new Date(this.lastValidEntryDate);
+               let lowerValidLimitDate = new Date(this.today);
+               let counter = 0;
+               switch (this.account.settings.get('validityTimeEntry')) {
+                  case 7:  // Default 7 days
+                     while (counter < 1) {
+                        lowerValidLimitDate.setDate(lowerValidLimitDate.getDate() - 1);
+                        if (lowerValidLimitDate.getDay() == 0) {
+                           counter++;
+                        }
+                     }
+                     lowerValidLimitDate.setDate(lowerValidLimitDate.getDate() + 1);
+                     if (dayRecord.date.getTime() >= lowerValidLimitDate.getTime() &&
+                        dayRecord.date.getTime() <= this.lastValidEntryDate.getTime()) {
+                        dayRecord.opened = true;
+                     }
+                     break;
+                  case 14:
+                     while (counter < 2) {
+                        lowerValidLimitDate.setDate(lowerValidLimitDate.getDate() - 1);
+                        if (lowerValidLimitDate.getDay() == 0) {
+                           counter++;
+                        }
+                     }
+                     lowerValidLimitDate.setDate(lowerValidLimitDate.getDate() + 1);
+                     if (dayRecord.date.getTime() >= lowerValidLimitDate.getTime() &&
+                        dayRecord.date.getTime() <= this.lastValidEntryDate.getTime()) {
+                        dayRecord.opened = true;
+                     }
+                     break;
+                  case 20:
+                     while (counter < 3) {
+                        lowerValidLimitDate.setDate(lowerValidLimitDate.getDate() - 1);
+                        if (lowerValidLimitDate.getDay() == 0) {
+                           counter++;
+                        }
+                     }
+                     lowerValidLimitDate.setDate(lowerValidLimitDate.getDate() + 1);
+                     if (dayRecord.date.getTime() >= lowerValidLimitDate.getTime() &&
+                        dayRecord.date.getTime() <= this.lastValidEntryDate.getTime()) {
+                        dayRecord.opened = true;
+                     }
+                     break;
+                  case 30:
+                     dayRecord.opened = true;
+                     break;
+               }
+               /* TODO: verify if this is valid */
+               if (dayRecord.date.getTime() < lowerValidLimitDate.getTime()) dayRecord.opened = true;
+            }
          }
-
-         // finding out if there are any other authorized working day (initially didn't allow it)
-         const isExceptionWorkingDay = this.findingDateInArray(
-            exceptionWorkingDays,
-            dayRecord.date
-         );
-         //console.log(isExceptionWorkingDay)
-         if (isExceptionWorkingDay) {
-            dayRecord.description = 'Exception Working Day';
-            dayRecord.should = workingDaysHours[dayRecord.date.getDay()];
-            dayRecord.active = dayRecord.date < today;
-            dayRecord.opened =
-               this.isDateValid(dayRecord.date) &&
-               dayRecord.date.getTime() <= this.selectedDate.getTime();
-            dayRecord.isHolliday = false;
-         }
+         // Over Labeling the Hollidays of the year
+         this.yearHolidays.forEach(day => {
+            const date = new Date(day['date']);
+            if (this.dateToISOString(date) == this.dateToISOString(dayRecord.date)) {
+               dayRecord.description = day['name'];
+               dayRecord.isHolliday = true;
+            }
+         });
       });
    }
    /**
@@ -216,14 +257,19 @@ export class EntryListComponent implements OnInit, OnDestroy {
     * according to the index selected
     */
    selectAnotherMonth(index: number): void {
-      const currentDate = new Date();
-      this.selectedDate.setMonth(this.selectedDate.getMonth() + index);
-      this.selectedDate = new Date(this.selectedDate);
-      if (this.selectedDate > currentDate) {
-         this.selectedDate = currentDate;
-         return;
+      const monthYearOfToday = new Date(this.today.getFullYear(), this.today.getMonth());
+      this.selectedMonthYear.setMonth(this.selectedMonthYear.getMonth() + index);
+      if (this.selectedMonthYear.getTime() > monthYearOfToday.getTime() &&
+         this.selectedMonthYear.getTime() <= this.lastValidDate.getTime()) {
+         this.selectedMonthYear = new Date(monthYearOfToday);
+         return
       }
-      this.calendarInit(this.selectedDate);
+
+      if (this.selectedMonthYear.getTime() < this.firstValidDate.getTime()) {
+         this.selectedMonthYear.setMonth(this.selectedMonthYear.getMonth() + 1);
+      }
+      this.selectedMonthYear = new Date(this.selectedMonthYear); // => Doing this to refactor variable in the template
+      this.calendarInit(this.selectedMonthYear);
       this.updateDailyRecordsInMonth();
    }
    /**
@@ -232,9 +278,9 @@ export class EntryListComponent implements OnInit, OnDestroy {
     * @param date Date beeing found inside the array
     * @returns the date founded or undefined if not
     */
-   findingDateInArray(array: any, date: Date): any {
+   findingDateInArray(array: any[], date: Date): any {
       return array.find((d: any) => {
-         let anyDay = d.hasOwnProperty('date')
+         let anyDay: Date = d.hasOwnProperty('date')
             ? new Date(d['date'])
             : new Date(d);
          return anyDay.toDateString() == date.toDateString();
@@ -248,11 +294,15 @@ export class EntryListComponent implements OnInit, OnDestroy {
    isDateValid(date: Date): boolean {
       const periodOfValidity = 5; // days ->> should come from settings 5, 10, 15 or 20
       let borderDate = new Date();
-      borderDate.setDate(this.selectedDate.getDate() - periodOfValidity);
+      borderDate.setDate(this.selectedMonthYear.getDate() - periodOfValidity);
       const borderDateWeek = this.getWeekNumberFromDate(borderDate);
       const requestedDateWeek = this.getWeekNumberFromDate(date);
 
       return requestedDateWeek >= borderDateWeek;
+   }
+
+   dateToISOString(date: Date): string {
+      return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
    }
    /**
     * Helper function to get the week number from a given date
@@ -306,7 +356,7 @@ export class EntryListComponent implements OnInit, OnDestroy {
       });
    }
 
-   openRecordEntryDialog(record: any, recordsByDate: any):void {
+   openRecordEntryDialog(record: any, recordsByDate: any): void {
       const recordDialogRef = this.dialog.open(
          RecordEntryDialogComponent,
          {
@@ -322,12 +372,12 @@ export class EntryListComponent implements OnInit, OnDestroy {
       });
    }
 
-   ngOnDestroy():void {
-      if(this.hollidaysSubscription)
-      this.hollidaysSubscription.unsubscribe();
-      if(this.timeEntriesSubscription)
-      this.timeEntriesSubscription.unsubscribe();
-      if(this.deleteTimeEntrySubscription)
-      this.deleteTimeEntrySubscription.unsubscribe();
+   ngOnDestroy(): void {
+      if (this.hollidaysSubscription)
+         this.hollidaysSubscription.unsubscribe();
+      if (this.timeEntriesSubscription)
+         this.timeEntriesSubscription.unsubscribe();
+      if (this.deleteTimeEntrySubscription)
+         this.deleteTimeEntrySubscription.unsubscribe();
    }
 }
