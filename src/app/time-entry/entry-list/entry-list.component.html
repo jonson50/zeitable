@@ -1,35 +1,55 @@
-<div class="w3-margin-top">
-  <div class="w3-right-align w3-margin-bottom">
-    <div>Accumulated: <span class="w3-tag w3-teal w3-round">15h 30m</span></div>
+<ng-container *ngIf="isSettingNoValid">
+  <div class="w3-panel w3-indigo">
+    <h3>Attention!</h3>
+    <p>You have not yet been assigned to a valid period.</p>
+    <p>Please contact the administrator.</p>
   </div>
-  <div class="month-name-row">
-    <!-- <div class="w3-button month-arrow" (click)="selectAnotherMonth(-1)">
-      <mat-icon>navigate_before</mat-icon>
-    </div> -->
-    <button mat-icon-button color="primary" (click)="selectAnotherMonth(-1)">
-      <mat-icon>navigate_before</mat-icon>
-    </button>
-    <div>{{ selectedMonthYear | date:'MMMM, y'}}</div>
-    <!-- <div class="w3-button month-arrow" (click)="selectAnotherMonth(1)">
-      <mat-icon>navigate_next</mat-icon>
-    </div> -->
-    <button mat-icon-button color="primary" (click)="selectAnotherMonth(1)">
-      <mat-icon>navigate_next</mat-icon>
-    </button>
-  </div>
-</div>
+</ng-container>
 
 <ng-container *ngIf="isAllRecordsReady">
+  <div class="w3-margin-top">
+    <div class="w3-row w3-section w3-padding-top-24">
+      <div class="w3-third w3-container">
+         Worked hours this month: <strong>{{ headInfo.workedHrs }}</strong>
+      </div>
+      <div class="w3-third w3-container">
+         Overtime this month: <strong>{{ headInfo.monthOvertime }}</strong>
+      </div>
+      <div class="w3-third w3-container">
+         Total Overtime: <span class="w3-tag w3-teal w3-round">{{ headInfo.totalOvertime }}</span>
+      </div>
+    </div>
+    <div class="month-name-row">
+      <!-- <div class="w3-button month-arrow" (click)="selectAnotherMonth(-1)">
+      <mat-icon>navigate_before</mat-icon>
+    </div> -->
+      <button mat-icon-button color="primary" (click)="selectAnotherMonth(-1)">
+        <mat-icon>navigate_before</mat-icon>
+      </button>
+      <div>{{ selectedMonthYear | date:'MMMM, y'}}</div>
+      <!-- <div class="w3-button month-arrow" (click)="selectAnotherMonth(1)">
+      <mat-icon>navigate_next</mat-icon>
+    </div> -->
+      <button mat-icon-button color="primary" (click)="selectAnotherMonth(1)">
+        <mat-icon>navigate_next</mat-icon>
+      </button>
+    </div>
+  </div>
+
+
   <mat-accordion class="dates-entries-list">
-    <mat-expansion-panel *ngFor="let record of recordDays; let i = index" [disabled]="!record.active">
+    <mat-expansion-panel *ngFor="let record of recordDaysMonth; let i = index" [disabled]="!record.active">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <span [ngClass]="{'w3-text-red': record.isHolliday}">  {{ record.date | date:'dd - EEE' }}</span>
+          <span [ngClass]="{'w3-text-red': record.isHolliday}"> {{ record.date | date:'dd - EEE' }}</span>
         </mat-panel-title>
         <mat-panel-description>
           <span [ngClass]="{'w3-text-red': record.isHolliday}">{{ record.description }}</span>
-          <span *ngIf="record.ist"><p>should be: {{record.should}}h - is:
-            <span class="w3-tag w3-round" [ngClass]="record.is > record.shouldInTime ? 'w3-red':'w3-teal'">{{record.ist}}</span></p>
+          <span *ngIf="record.records.length">
+            <p>should be: {{record.should}}h - is:
+              <span class="w3-tag w3-round"
+                [ngClass]="record.is > record.shouldInTime ? 'w3-red':'w3-teal'">{{record.ist}}</span>
+            </p>
           </span>
         </mat-panel-description>
       </mat-expansion-panel-header>
@@ -38,9 +58,9 @@
         [disabled]="(!record.opened || record.records.length > 2)" (click)="addRecord(i)">
         + Add record
       </button>
-      <app-record-card *ngFor="let _record of record.records" [record]="_record" [enableActions]="!(!record.opened || record.records.length > 2)"
-         [indexMainCard] = "i"
-          (editClick)="editRecord($event)" (deleteClick)="deleteRecord($event)"></app-record-card>
+      <app-record-card *ngFor="let _record of record.records" [record]="_record"
+        [enableActions]="!(!record.opened || record.records.length > 2)" [indexMainCard]="i"
+        (editClick)="editRecord($event)" (deleteClick)="deleteRecord($event)"></app-record-card>
     </mat-expansion-panel>
   </mat-accordion>
 </ng-container>

@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { Account } from '@app/core/_models/account';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { DOCUMENT } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
    selector: 'app-layout',
@@ -24,15 +25,22 @@ export class LayoutComponent implements OnInit, AfterViewInit {
    currentAccount!: Observable<Account>;
 
    constructor(
-      @Inject(DOCUMENT) private document: Document, 
+      @Inject(DOCUMENT) private document: Document,
       private renderer: Renderer2,
       private observer: BreakpointObserver,
-      private authService: AuthService
-      ) {}
+      private authService: AuthService,
+      private router: Router,
+   ) { }
 
    ngOnInit(): void {
       this.renderer.setAttribute(this.document.body, 'class', 'theme-light');
       this.currentAccount = this.authService.account$;
+      this.router.events.subscribe((event) => {
+         const isSmallScreen = this.observer.isMatched("(max-width: 800px)");
+         if (isSmallScreen) {
+            this.sidenav.close();
+         }
+      });
    }
 
    ngAfterViewInit() {
@@ -54,7 +62,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
       this.authService.logout();
    }
 
-   onDarkModeSwitched({checked}: MatSlideToggleChange) {
+   onDarkModeSwitched({ checked }: MatSlideToggleChange) {
       const hostClass = checked ? 'theme-dark' : 'theme-light';
       this.renderer.setAttribute(this.document.body, 'class', hostClass);
    }

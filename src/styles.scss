@@ -3,9 +3,8 @@
 
 @include mat-core();
 
-$mat-theming-primary: mat-palette($mat-deep-purple);
-$mat-theming-accent: mat-palette($mat-purple, A200, A100, A400);
-
+$mat-theming-primary: mat-palette($mat-indigo);
+$mat-theming-accent: mat-palette($mat-indigo, A200, A100, A400);
 $mat-theming-warm: mat-palette($mat-red);
 
 $mat-theming-theme: mat-light-theme($mat-theming-primary, $mat-theming-accent, $mat-theming-warm);

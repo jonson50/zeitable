@@ -1,11 +1,10 @@
 import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { first } from 'rxjs';
 import { AuthService } from '@app/core/_services/auth.service';
 import { SubSink } from 'subsink';
-import { HttpErrorResponse } from '@angular/common/http';
 import { DOCUMENT } from '@angular/common';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
    selector: 'app-login',
@@ -25,7 +24,8 @@ export class LoginComponent implements OnInit, OnDestroy {
       private formBuilder: UntypedFormBuilder,
       private authService: AuthService,
       private router: Router,
-      private route: ActivatedRoute
+      private route: ActivatedRoute,
+      private spinnerService: NgxSpinnerService
    ) { }
 
    ngOnInit(): void {
@@ -64,10 +64,12 @@ export class LoginComponent implements OnInit, OnDestroy {
                console.error(error.error);
             }
          }) */
+      this.spinnerService.show();
       this.authService.login(submitedForm.value.email, submitedForm.value.password)
          .then(() => {
             const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
             this.router.navigateByUrl(returnUrl);
+            this.spinnerService.hide();
          })
          .catch(e => console.error(e))
    }

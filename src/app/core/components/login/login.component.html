@@ -3,26 +3,23 @@
 
       <div class="w3-container w3-center">
          <br>
-         <h1>Login</h1>
+         <h3>Login</h3>
          <img src="../../../assets/images/coinspot.svg" alt="Avatar" style="width:30%" class="w3-circle w3-margin-top">
-         <h2>zeitable - QMS</h2>
+         <h1><strong>Zeit</strong>table</h1>
       </div>
 
       <form class="w3-container" [formGroup]="loginForm" (ngSubmit)="login(loginForm)">
          <div class="w3-section">
-            <mat-form-field class="full-width" appearance="standard">
+            <mat-form-field class="w3-bar" appearance="standard">
                <mat-label>E-Mail</mat-label>
                <input matInput placeholder="example@test.com" type="email" formControlName="email">
             </mat-form-field>
-            <mat-form-field class="full-width" appearance="standard">
+            <mat-form-field class="w3-bar" appearance="standard">
                <mat-label>Password</mat-label>
                <input matInput placeholder="Enter your password" type="password" formControlName="password">
             </mat-form-field>
-            <!-- <label>Password</label>
-            <input class="w3-input w3-border" type="text" placeholder="Enter Password" name="psw" required> -->
-            <!-- <button class="w3-button w3-block w3-green w3-section w3-padding" type="submit">Login</button> -->
-            <button mat-raised-button color="primary" class="w3-block w3-section" type="submit" [disabled]="loginForm.invalid">Login</button>
-            <mat-checkbox class="w3-margin-top" [(ngModel)]="rememberMe" [ngModelOptions]="{standalone: true}">Remember me</mat-checkbox>
+            <mat-checkbox class="w3-margin-bottom" [(ngModel)]="rememberMe" [ngModelOptions]="{standalone: true}">Remember me</mat-checkbox>
+            <button mat-raised-button color="primary" class="w3-block w3-large w3-padding-large" type="submit" [disabled]="loginForm.invalid">Login</button>
          </div>
       </form>
 

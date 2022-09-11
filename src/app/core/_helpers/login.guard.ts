@@ -5,7 +5,7 @@ import {
    Router,
    RouterStateSnapshot
 } from '@angular/router';
-import { catchError, map, Observable, from, take } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AuthService } from '@app/core/_services/auth.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 

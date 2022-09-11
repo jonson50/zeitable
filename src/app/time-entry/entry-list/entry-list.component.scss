@@ -2,9 +2,11 @@
    display: flex;
    justify-content: space-between;
    font-size: 25px;
+
    button:first-child {
       margin-left: 5px;
    }
+
    button:last-child {
       margin-right: 10px;
    }
@@ -15,7 +17,7 @@
       width: 20px;
       display: inline;
       vertical-align: middle;
-    }
+   }
 }
 
 .add-time-btn {
@@ -32,9 +34,10 @@
 /* On screens that are 800px or less, header description is hide */
 @media screen and (max-width: 800px) {
    .dates-entries-list .mat-expansion-panel-header-description {
-      > span:first-child {
+      >span:first-child {
          display: none;
       }
+
       justify-content: end;
    }
 
@@ -42,5 +45,3 @@
       width: 80px;
    }
 }
-
-

@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Time Record for {{ record.date | date:'MMM d, y'}}</h2>
+<h2 mat-dialog-title>{{ date | date:'MMM d, y'}}</h2>
 <form class="demo-form" [formGroup]="recordForm" (ngSubmit)="onSubmit()" novalidate>
    <mat-dialog-content>
       <div class="w3-row">

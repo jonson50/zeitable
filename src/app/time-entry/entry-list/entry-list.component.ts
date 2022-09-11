@@ -1,8 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Account } from '@app/core/_models/account';
-import { Settings } from '@app/core/_models/setting';
-import { IProject, Project } from '@app/core/_models/project';
 import {
    DayRecord,
    IWorkinDaysHours,
@@ -22,15 +20,22 @@ import { Subscription } from 'rxjs';
 })
 export class EntryListComponent implements OnInit, OnDestroy {
    isAllRecordsReady: boolean = false;
-   selectedMonthYear!: Date; // This should be the first date of valid date, if implemented
+   isSettingNoValid: boolean = false;
    account!: Account;
    recordDays: DayRecord[] = [];
+   recordDaysMonth: DayRecord[] = [];
    records: Parse.Object[] = [];
    yearHolidays = [];
+   selectedMonthYear!: Date; // This should be the first date of valid date, if implemented
    lastValidEntryDate!: Date; // Date of the last valid EntryTime
    firstValidDate: Date = new Date(2022, 0, 1); // => Should come from settings
    lastValidDate: Date = new Date(2022, 11, 31); // => should come from settings
    today = new Date(2022, 3, 7);
+   headInfo = {
+      workedHrs: '00',
+      monthOvertime: '00',
+      totalOvertime: '00'
+   };
 
    //Subscriptions
    hollidaysSubscription!: Subscription;
@@ -46,20 +51,23 @@ export class EntryListComponent implements OnInit, OnDestroy {
 
    ngOnInit(): void {
       this.account = this.authService.accountValue;
-      console.log(this.account)
-      const zone = this.account.settings.get('zone'); // => a valid settings should be verified in order to inform client to contact admin
+      if (this.account.settings) {
+         const zone = this.account.settings.get('zone'); // => a valid settings should be verified in order to inform client to contact admin
 
-      this.spinnerService.show();
-      this.hollidaysSubscription = this.recordsService.getHollidays(zone).subscribe({
-         next: hollidays => {
-            this.yearHolidays = hollidays.get('days');
+         this.spinnerService.show();
+         this.hollidaysSubscription = this.recordsService.getHollidays(zone).subscribe({
+            next: hollidays => {
+               this.yearHolidays = hollidays.get('days');
 
-            this.loadRecords();
-         },
-         error: error => {
-            console.error(error);
-         }
-      });
+               this.loadRecords();
+            },
+            error: error => {
+               console.error(error);
+            }
+         });
+      } else {
+         this.isSettingNoValid = true;
+      }
    }
    /**
     * Method to get all TimeEntry records from server
@@ -82,9 +90,10 @@ export class EntryListComponent implements OnInit, OnDestroy {
                this.lastValidEntryDate = new Date(this.selectedMonthYear);
             }
             //this.lastValidEntryDate = new Date(2022, 0, 29); // TO DELETE
-            this.calendarInit(this.selectedMonthYear);
+            //this.calendarInit(this.selectedMonthYear);
             //Using the TimeEntry records to fill up the calendar table.
-            this.updateDailyRecordsInMonth();
+            this.updateDailyRecords();
+            this.dailyRecordsMonth(this.selectedMonthYear);
             this.isAllRecordsReady = true;
          },
          error: (error) => console.error(error),
@@ -93,25 +102,28 @@ export class EntryListComponent implements OnInit, OnDestroy {
          },
       });
    }
-
-   calendarInit(selectedDate: Date): void {
-      let date = new Date(
-         selectedDate.getFullYear(),
-         selectedDate.getMonth(),
-         1
-      );
-      this.recordDays = [];
-      while (date.getMonth() === selectedDate.getMonth()) {
-         let dayRecord: DayRecord = new DayRecord();
-         dayRecord.date = new Date(date);
-         this.recordDays.push(dayRecord);
-         date.setDate(date.getDate() + 1);
-      }
-   }
    /**
     * @return {Date[]} List with date objects for each day of the month
     */
-   updateDailyRecordsInMonth(): void {
+   updateDailyRecords(): void {
+      let totalOvertime = 0;
+      let firstDate: Date;
+      let lastDate = new Date(this.today.getFullYear(), this.today.getMonth() + 1);
+
+      if (this.records) {
+         const d = this.records[0].get('startTime');
+         firstDate = new Date(d.getFullYear(), d.getMonth());
+      } else {
+         firstDate = new Date(this.selectedMonthYear.getFullYear(), this.selectedMonthYear.getMonth());
+      }
+
+      this.recordDays = [];
+      while (firstDate.getTime() < lastDate.getTime()) {
+         let dayRecord: DayRecord = new DayRecord();
+         dayRecord.date = new Date(firstDate);
+         this.recordDays.push(dayRecord);
+         firstDate.setDate(firstDate.getDate() + 1);
+      }
       // Iterating every single Record
       this.recordDays.forEach(dayRecord => {
          dayRecord.records = [];
@@ -128,7 +140,6 @@ export class EntryListComponent implements OnInit, OnDestroy {
             ];
             // const yearHolidays: any[] = this.account.settings.get('yearHolidays');
             exceptionWorkingDays = setting.get('exceptionWorkingDays');
-
             const _startTime = new Date(this.records[index].get('startTime'));
             if (dayRecord.date.toLocaleDateString() === _startTime.toLocaleDateString()) {
                switch (this.records[index].get('type')) {
@@ -145,11 +156,13 @@ export class EntryListComponent implements OnInit, OnDestroy {
                      dayRecord.isAbsence = true;
                      break
                   default:
-                     dayRecord.records.push(new TimeEntry(this.records[index]));
+                     let record = new TimeEntry();
+                     record.patchParseValue(this.records[index]);
+                     dayRecord.records.push(record);
                }
             }
          }
-         // Configuring every single record to display 
+         // Configuring every single record to display
          if (workingDaysHours[dayRecord.date.getDay()] == 0 || dayRecord.isAbsence) {
             // Days here are NOT allow to work
             if (!dayRecord.isAbsence) {
@@ -249,7 +262,27 @@ export class EntryListComponent implements OnInit, OnDestroy {
                dayRecord.isHolliday = true;
             }
          });
+         totalOvertime += dayRecord.overtime;
       });
+      this.headInfo.totalOvertime = TimeEntry.numbertimeToStringtime(totalOvertime);
+   }
+
+   dailyRecordsMonth(date: Date): void {
+      let workedHrs = 0;
+      let monthOvertime = 0;
+
+      this.recordDaysMonth = this.recordDays.filter(record => {
+         return `${record.date.getFullYear()}-${record.date.getMonth()}` == `${date.getFullYear()}-${date.getMonth()}`;
+      });
+      // Calculating overtime data
+      this.recordDaysMonth.forEach(dayRecord => {
+         if (dayRecord.records.length) {
+            workedHrs += dayRecord.is;
+            monthOvertime += dayRecord.overtime;
+         }
+      });
+      this.headInfo.workedHrs = TimeEntry.numbertimeToStringtime(workedHrs);
+      this.headInfo.monthOvertime = TimeEntry.numbertimeToStringtime(monthOvertime);
    }
    /**
     * @param {int} index value to be either added or substracted from current month value
@@ -267,10 +300,13 @@ export class EntryListComponent implements OnInit, OnDestroy {
 
       if (this.selectedMonthYear.getTime() < this.firstValidDate.getTime()) {
          this.selectedMonthYear.setMonth(this.selectedMonthYear.getMonth() + 1);
+         this.selectedMonthYear = new Date(this.selectedMonthYear);
+         return;
       }
       this.selectedMonthYear = new Date(this.selectedMonthYear); // => Doing this to refactor variable in the template
-      this.calendarInit(this.selectedMonthYear);
-      this.updateDailyRecordsInMonth();
+      //this.calendarInit(this.selectedMonthYear);
+      //this.updateDailyRecords();
+      this.dailyRecordsMonth(this.selectedMonthYear);
    }
    /**
     *
@@ -320,21 +356,22 @@ export class EntryListComponent implements OnInit, OnDestroy {
 
    addRecord(index: number): void {
       let record = new TimeEntry();
-      record.date = this.recordDays[index].date;
-      this.openRecordEntryDialog(record, this.recordDays[index].records)
+      this.openRecordEntryDialog(this.recordDaysMonth[index].date, record, this.recordDaysMonth[index].records)
    }
 
    editRecord(data: any) {
-      this.openRecordEntryDialog(data.record, this.recordDays[data.index].records)
+      let record = new TimeEntry(data.record)
+      record.patchParseValue(data.record._originalParseObject);
+      this.openRecordEntryDialog(data.record.startTime, record, this.recordDaysMonth[data.index].records)
    }
 
    deleteRecord(record: TimeEntry) {
       const recordDialogRef = this.dialog.open(SimpleDialogComponent, {
          data: {
             title: 'Delete Time Entry',
-            content: `Would you like to delete record from ${TimeEntry.stringTimeFromDate(
+            content: `Would you like to delete record from ${TimeEntry.dateToStringtime(
                record.startTime
-            )} to ${TimeEntry.stringTimeFromDate(record.endTime)}?`,
+            )} to ${TimeEntry.dateToStringtime(record.endTime)}?`,
             cancelText: 'Cancel',
             okText: 'Delete',
          },
@@ -356,13 +393,14 @@ export class EntryListComponent implements OnInit, OnDestroy {
       });
    }
 
-   openRecordEntryDialog(record: any, recordsByDate: any): void {
+   openRecordEntryDialog(date:Date, record: any, recordsByDate: any): void {
       const recordDialogRef = this.dialog.open(
          RecordEntryDialogComponent,
          {
             data: {
                record: record,
                recordsByDate: recordsByDate,
+               date: date
             },
          }
       );

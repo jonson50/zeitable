@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './core/components/layout/layout.component';
 import { LoginComponent } from './core/components/login/login.component';
 import { DashboardComponent } from './core/components/dashboard/dashboard.component';
-import { TemporalHomeComponent } from './core/temporal-home/temporal-home.component';
 import { LoginGuard } from '@app/core/_helpers';
 import { AuthorizationGuard } from './core/_services/authorization.guard';
 
@@ -21,7 +20,6 @@ const routes: Routes = [
          { path: 'dashboard', component: DashboardComponent },
          { path: 'timeentry', loadChildren: () => import('./time-entry/time-entry.module').then(m => m.TimeEntryModule) },
          { path: 'settings', loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule) },
-         { path: 'temporal', component: TemporalHomeComponent, pathMatch: 'full' },
          { path: '**', redirectTo: '/dashboard' },
       ]
    },
@@ -39,5 +37,4 @@ export const routingComponents = [
    LoginComponent,
    LayoutComponent,
    DashboardComponent,
-   TemporalHomeComponent,
 ];

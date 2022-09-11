@@ -1,22 +1,14 @@
-import { DOCUMENT } from '@angular/common';
-import { Component, HostBinding, Inject, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
    selector: 'app-root',
    templateUrl: './app.component.html',
    styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
    typeSelected: string;
-   
-
-   
 
    constructor() {
       this.typeSelected = 'ball-scale-multiple';
-   }
-
-   ngOnInit(): void {
-      
    }
 }
