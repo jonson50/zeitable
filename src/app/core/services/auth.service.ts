@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import * as Parse from 'parse';
 import { BehaviorSubject, Observable } from 'rxjs'; // Creators
-import { Account, IBaseAccount } from '@app/core/_models/account';
+import { Account, IBaseAccount } from '@app/core/models/account';
 import { environment } from '@environments/environment';
 import { CacheService } from './cache.service';
 
@@ -30,7 +30,7 @@ export abstract class AuthService extends CacheService {
     * Method used for making a Login to the app
     * @param email parameter used as username while logging in
     * @param password parameter that contains the password for logging in
-    * @returns return a Promise ensuring the current Account with all data required 
+    * @returns return a Promise ensuring the current Account with all data required
     */
    async login(email: string, password: string): Promise<Account> {
       this.clearToken();
@@ -39,7 +39,9 @@ export abstract class AuthService extends CacheService {
 
       return account;
    }
-
+   /**
+    * Make logout from the system
+    */
    logout(): void {
       Parse.User.logOut()
          .then(
@@ -85,7 +87,7 @@ export abstract class AuthService extends CacheService {
       return account;
    }
    /**
-    * @param {Parse.User} user 
+    * @param {Parse.User} user
     * @returns an Accoun Promise with all user data.
     */
    async fillingAccount(user: Parse.User): Promise<Account> {
@@ -109,7 +111,7 @@ export abstract class AuthService extends CacheService {
       // setting session token for app
       this.token = user.attributes['sessionToken'];
       // creating new Account for app
-      const baseAccount:IBaseAccount = {
+      const baseAccount: IBaseAccount = {
          user: user,
          person: person,
          roles: roles,

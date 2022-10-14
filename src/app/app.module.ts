@@ -4,8 +4,8 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule, routingComponents } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { SimpleDialogComponent } from '@app/core/_components/simple-dialog.component';
-import { MainToastComponent } from '@app/core/_components/toast.component';
+import { SimpleDialogComponent } from '@app/core/utils/simple-dialog.component';
+import { MainToastComponent } from '@app/core/utils/toast.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // Services

@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
-import { SimpleDialogComponent } from './simple-dialog.component';
-import { MainToastComponent } from './toast.component';
+import { SimpleDialogComponent } from '../utils/simple-dialog.component';
+import { MainToastComponent } from '../utils/toast.component';
 
 
 @Injectable({

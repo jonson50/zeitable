@@ -3,8 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './core/components/layout/layout.component';
 import { LoginComponent } from './core/components/login/login.component';
 import { DashboardComponent } from './core/components/dashboard/dashboard.component';
-import { LoginGuard } from '@app/core/_helpers';
-import { AuthorizationGuard } from './core/_services/authorization.guard';
+import { LoginGuard } from '@app/core/guards';
+import { AuthorizationGuard } from './core/guards/authorization.guard';
 
 const routes: Routes = [
    {
@@ -18,8 +18,8 @@ const routes: Routes = [
       canActivate: [AuthorizationGuard],
       children: [
          { path: 'dashboard', component: DashboardComponent },
-         { path: 'timeentry', loadChildren: () => import('./time-entry/time-entry.module').then(m => m.TimeEntryModule) },
-         { path: 'settings', loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule) },
+         { path: 'timeentry', loadChildren: () => import('./modules/time-entry/time-entry.module').then(m => m.TimeEntryModule) },
+         { path: 'settings', loadChildren: () => import('./modules/settings/settings.module').then(m => m.SettingsModule) },
          { path: '**', redirectTo: '/dashboard' },
       ]
    },

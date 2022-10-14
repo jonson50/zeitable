@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ITimeEntryForm, TimeEntry } from '@app/core/_models/time-entry';
+import { ITimeEntryForm, TimeEntry } from '@app/core/models/time-entry';
 
 @Component({
    selector: 'app-record-card',

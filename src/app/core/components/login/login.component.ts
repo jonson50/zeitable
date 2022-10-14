@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '@app/core/_services/auth.service';
+import { AuthService } from '@app/core/services/auth.service';
 import { SubSink } from 'subsink';
 import { DOCUMENT } from '@angular/common';
 import { NgxSpinnerService } from 'ngx-spinner';

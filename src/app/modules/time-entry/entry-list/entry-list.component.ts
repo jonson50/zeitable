@@ -1,15 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Account } from '@app/core/_models/account';
+import { Account } from '@app/core/models/account';
 import {
    DayRecord,
    IWorkinDaysHours,
    TimeEntry,
-} from '@app/core/_models/time-entry';
-import { AuthService } from '@app/core/_services';
+} from '@app/core/models/time-entry';
+import { AuthService } from '@app/core/services';
 import { RecordsService } from '../services/records.service';
 import { RecordEntryDialogComponent } from '../components/record-entry-dialog/record-entry-dialog.component';
-import { SimpleDialogComponent } from '@app/core/_components/simple-dialog.component';
+import { SimpleDialogComponent } from '@app/core/utils/simple-dialog.component';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 
@@ -39,7 +39,6 @@ export class EntryListComponent implements OnInit, OnDestroy {
 
    //Subscriptions
    hollidaysSubscription!: Subscription;
-   timeEntriesSubscription!: Subscription;
    deleteTimeEntrySubscription!: Subscription;
 
    constructor(
@@ -73,9 +72,9 @@ export class EntryListComponent implements OnInit, OnDestroy {
     * Method to get all TimeEntry records from server
     */
    loadRecords(): void {
-      this.timeEntriesSubscription = this.recordsService.timeEntries.subscribe({
-         next: (resp) => {
-            this.records = resp;
+      this.recordsService.timeEntries().then(
+         result => {
+            this.records = result;
             let lastRecord = this.records[this.records.length - 1];
             if (lastRecord) {
                const lastRecordDate = lastRecord.get('startTime');
@@ -96,11 +95,10 @@ export class EntryListComponent implements OnInit, OnDestroy {
             this.dailyRecordsMonth(this.selectedMonthYear);
             this.isAllRecordsReady = true;
          },
-         error: (error) => console.error(error),
-         complete: () => {
-            this.spinnerService.hide();
-         },
-      });
+         error => { console.error(error) }
+      ).finally(
+         () => { this.spinnerService.hide(); }
+      );
    }
    /**
     * @return {Date[]} List with date objects for each day of the month
@@ -413,8 +411,6 @@ export class EntryListComponent implements OnInit, OnDestroy {
    ngOnDestroy(): void {
       if (this.hollidaysSubscription)
          this.hollidaysSubscription.unsubscribe();
-      if (this.timeEntriesSubscription)
-         this.timeEntriesSubscription.unsubscribe();
       if (this.deleteTimeEntrySubscription)
          this.deleteTimeEntrySubscription.unsubscribe();
    }

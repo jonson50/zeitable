@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
-import { ToastType } from '../_components/message.enum';
-import { MessageService } from '../_components/message.service';
-import { AuthService } from './auth.service';
+import { ToastType } from '../utils/message.enum';
+import { MessageService } from '../services/message.service';
+import { AuthService } from '../services/auth.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 @Injectable({
@@ -49,7 +49,7 @@ export class AuthorizationGuard implements CanActivate {
       } else {
         this.mustLoginMessage();
         return true
-      }      
+      }
     }
   }
   /**

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { Settings } from '@app/core/_models/setting';
+import { Settings } from '@app/core/models/setting';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { map, Observable, startWith } from 'rxjs';
 import { SettingsService } from '../services/settings.service';

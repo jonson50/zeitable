@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { concatMap, from, Observable, zip, of, map } from 'rxjs';
 import * as Parse from 'parse';
-import { AuthService } from '@app/core/_services';
-import { TimeEntry } from '@app/core/_models/time-entry';
+import { AuthService } from '@app/core/services';
+import { TimeEntry } from '@app/core/models/time-entry';
 
 @Injectable({
    providedIn: 'root',
@@ -15,22 +15,8 @@ export class RecordsService {
       this.user = this.authService.accountValue.user;
    }
 
-   get timeEntries(): Observable<any> {
-      /* return from(new Parse.Query("TimeEntry").equalTo('user', this.user).find()).pipe(
-        concatMap(records => {
-          return zip(
-            of(records), // All TimeEntry records for current user.
-            from(new Parse.Query("Project").equalTo('users', this.user).ascending("code").find())
-          )
-        }),
-        map(([records, projects]: any[]) => {
-          return ({
-            records: records,
-            projects: projects
-          })
-        })
-      ); */
-      return from(new Parse.Query('TimeEntry').equalTo('user', this.user).ascending('startTime').find());
+   async timeEntries(): Promise<any> {
+      return await new Parse.Query('TimeEntry').equalTo('user', this.user).ascending('startTime').find();
    }
    /**
     *

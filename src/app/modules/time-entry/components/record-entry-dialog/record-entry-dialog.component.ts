@@ -3,9 +3,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
    FormGroup, Validators, FormBuilder
 } from '@angular/forms'
-import { TimeEntry } from '@app/core/_models/time-entry';
-import { AuthService } from '@app/core/_services';
-import { RecordsService } from '@app/time-entry/services/records.service';
+import { TimeEntry } from '@app/core/models/time-entry';
+import { AuthService } from '@app/core/services';
+import { RecordsService } from '@app/modules/time-entry/services/records.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({

@@ -6,7 +6,7 @@ import {
    RouterStateSnapshot
 } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AuthService } from '@app/core/_services/auth.service';
+import { AuthService } from '@app/core/services/auth.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 @Injectable({
