@@ -19,11 +19,13 @@
       </span>
    </mat-card-content>
    <mat-card-actions align="end" *ngIf="enableActions">
-      <button mat-stroked-button (click)="onClickEdit()">
-         <mat-icon>edit</mat-icon>
+      <button mat-stroked-button color="primary" (click)="onClickEdit()">
+         <!-- <mat-icon>edit</mat-icon> -->
+         Edit
       </button>
       <button mat-stroked-button color="warn" (click)="onClickDelete()">
-         <mat-icon>delete_forever</mat-icon>
+         <!-- <mat-icon>delete_forever</mat-icon> -->
+         Delete
       </button>
    </mat-card-actions>
 </mat-card>

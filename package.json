@@ -21,7 +21,6 @@
     "@angular/platform-browser": "^14.1.1",
     "@angular/platform-browser-dynamic": "^14.1.1",
     "@angular/router": "^14.1.1",
-    "@covalent/core": "^4.2.1",
     "ngx-mat-timepicker": "^14.0.2",
     "ngx-spinner": "^14.0.0",
     "parse": "^3.4.3",
